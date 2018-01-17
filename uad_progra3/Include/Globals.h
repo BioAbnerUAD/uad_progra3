@@ -25,14 +25,14 @@
 
 #else
 
-#define VERTEX_SHADER_TEST_OBJECT      "C:\\Users\\Joel\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_testobject.vert"
-#define FRAGMENT_SHADER_TEST_OBJECT    "C:\\Users\\Joel\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_testobject.frag"
-#define VERTEX_SHADER_3D_OBJECTS       "C:\\Users\\Joel\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_3dobject.vert"
-#define FRAGMENT_SHADER_3D_OBJECTS     "C:\\Users\\Joel\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_3dobject.frag"
-#define VERTEX_SHADER_MENU             "C:\\Users\\Joel\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_menu.vert"
-#define FRAGMENT_SHADER_MENU           "C:\\Users\\Joel\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_menu.frag"
-#define MENU_TEXTURE_FILE              "C:\\Users\\Joel\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\TEXTURES\\Menu.tga"
-#define MENU_TEXTURE_FILE_EXAMEN_FINAL "C:\\Users\\Joel\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\TEXTURES\\MenuExamenFinal.tga"
+#define VERTEX_SHADER_TEST_OBJECT      "C:\\Users\\S-55\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_testobject.vert"
+#define FRAGMENT_SHADER_TEST_OBJECT    "C:\\Users\\S-55\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_testobject.frag"
+#define VERTEX_SHADER_3D_OBJECTS       "C:\\Users\\S-55\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_3dobject.vert"
+#define FRAGMENT_SHADER_3D_OBJECTS     "C:\\Users\\S-55\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_3dobject.frag"
+#define VERTEX_SHADER_MENU             "C:\\Users\\S-55\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_menu.vert"
+#define FRAGMENT_SHADER_MENU           "C:\\Users\\S-55\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\SHADERS\\glsl_menu.frag"
+#define MENU_TEXTURE_FILE              "C:\\Users\\S-55\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\TEXTURES\\Menu.tga"
+#define MENU_TEXTURE_FILE_EXAMEN_FINAL "C:\\Users\\S-55\\Git\\uad_progra3\\uad_progra3\\Resources\\MEDIA\\TEXTURES\\MenuExamenFinal.tga"
 
 #endif //  IN_CLASS
 

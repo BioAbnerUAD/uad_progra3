@@ -150,7 +150,7 @@ void CGameWindow::mainLoop(void *appPointer)
 {
 	// Variables for time-based animation
 	double last_time = 0;
-	double dt = 1000 / 60;  // constant dt step of 1 frame every 60 seconds
+	double dt = 1000.0f;
 	double accumulator = 0;
 	double current_time, delta_time;
 	double PCFreq = 0.0;
@@ -191,10 +191,12 @@ void CGameWindow::mainLoop(void *appPointer)
 		current_time = double(li.QuadPart - CounterStart) / PCFreq;
 		delta_time   = current_time - last_time; // Calculate elapsed time
 		last_time    = current_time;             // Update last time to be the current time
-		accumulator += delta_time;               // 
+		accumulator += delta_time;               //
 		while (accumulator >= dt) {              //
 			accumulator -= dt;
+			cout << "Frame Rate: " << dt / delta_time << endl;
 		}
+		if (accumulator < 0) accumulator = 0;
 
 		/* Update */
 		((CApp *)appPointer)->update((float)delta_time);
