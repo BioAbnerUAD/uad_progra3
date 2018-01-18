@@ -150,10 +150,11 @@ void CGameWindow::mainLoop(void *appPointer)
 {
 	// Variables for time-based animation
 	double last_time = 0;
-	double dt = 1000.0f;
+	double dt = (1000.0 / 60);
 	double accumulator = 0;
 	double current_time, delta_time;
 	double PCFreq = 0.0;
+	int frameCounter = 0;
 	__int64 CounterStart = 0;
 	LARGE_INTEGER li;
 
@@ -192,9 +193,10 @@ void CGameWindow::mainLoop(void *appPointer)
 		delta_time   = current_time - last_time; // Calculate elapsed time
 		last_time    = current_time;             // Update last time to be the current time
 		accumulator += delta_time;               //
-		while (accumulator >= dt) {              //
-			accumulator -= dt;
-			cout << "Frame Rate: " << dt / delta_time << endl;
+		if (accumulator >= 1000) {              //
+			cout << "Frame Rate: " << 1000 * frameCounter / accumulator << endl;
+			accumulator -= 1000;
+			frameCounter = 0;
 		}
 		if (accumulator < 0) accumulator = 0;
 
@@ -203,6 +205,7 @@ void CGameWindow::mainLoop(void *appPointer)
 
 		/* Render */
 		((CApp *)appPointer)->render();
+		frameCounter++;
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_Window);
