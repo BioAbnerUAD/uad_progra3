@@ -167,7 +167,6 @@
   <ItemGroup>
     <ClInclude Include="Include\C3DModel.h" />
     <ClInclude Include="Include\CApp.h" />
-    <ClInclude Include="Include\CAppExamenFinal.h" />
     <ClInclude Include="Include\CAppParcial2.h" />
     <ClInclude Include="Include\CBinaryTree.h" />
     <ClInclude Include="Include\CBinaryTreeNode.h" />

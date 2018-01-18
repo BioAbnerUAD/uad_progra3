@@ -30,9 +30,6 @@
     <ClInclude Include="Include\CApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\CAppExamenFinal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\CAppParcial2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
