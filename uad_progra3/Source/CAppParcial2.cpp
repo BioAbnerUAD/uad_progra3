@@ -12,6 +12,7 @@ using namespace std;
 #include "../Include/C3DModel.h"
 #include "../Include/LoadTGA.h"
 #include "../Include/CWideStringHelper.h"
+#include "../UTFConvert.h"
 
 /* */
 CAppParcial2::CAppParcial2() : 
@@ -334,10 +335,10 @@ bool CAppParcial2::load3DModel(const char * const filename)
 	unloadCurrent3DModel();
 	
 	// Create new 3D object
-	m_p3DModel = new C3DModel();
+	m_p3DModel = C3DModel::load(UTFConvert::convert_UTF8_UTF16((char*)filename));
 
 	// Load object from file
-	bool loaded = m_p3DModel->loadFromFile(filename);
+	bool loaded = m_p3DModel->isInitialized();
 
 	if (loaded)
 	{
