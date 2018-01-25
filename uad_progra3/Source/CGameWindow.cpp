@@ -8,6 +8,7 @@
 using namespace std;
 
 #include "../Include/CGameWindow.h"
+#include "../Include/CAppParcial2.h"
 #include "../Include/CApp.h"
 
 // Initialize static member variables
@@ -413,6 +414,8 @@ void CGameWindow::processInput(void *appPointer)
 			CGameWindow::requestExecuteAction      = false;
 			CGameWindow::requestSelectNextMenuItem = false;
 			CGameWindow::requestSelectPrevMenuItem = false;
+
+			
 		}
 	}
 }

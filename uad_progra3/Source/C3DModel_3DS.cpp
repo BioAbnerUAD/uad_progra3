@@ -1,9 +1,6 @@
 #include "../stdafx.h"
 #include <iostream>
-#include <fstream>
 #include <sstream>
-#include <string>
-#include <vector>
 using namespace std;
 
 #include "../Include/C3DModel_3DS.h"
@@ -28,21 +25,49 @@ bool C3DModel_3DS::readFile(const char * filename)
 
 	if (parser.Success)
 	{
-		this->m_vertexIndices = new unsigned short[parser.indices.size()];
-		memcpy(this->m_vertexIndices, &(parser.indices)[0], parser.indices.size() * sizeof(unsigned short));
+		if (parser.indices.size() > 0)
+		{
+			this->m_vertexIndices = new unsigned short[parser.indices.size()];
+			memcpy(this->m_vertexIndices, &(parser.indices)[0], parser.indices.size() * sizeof(unsigned short));
 
-		this->m_verticesRaw = new float[parser.verticesRaw.size()];
-		memcpy(this->m_vertices, &(parser.verticesRaw)[0], parser.verticesRaw.size() * sizeof(float));
+			this->m_UVindices = new unsigned short[parser.indices.size()];
+			memcpy(this->m_UVindices, &(parser.indices)[0], parser.indices.size() * sizeof(unsigned short));
+		}
 
-		this->m_uvCoordsRaw = new float[parser.UVcoordsRaw.size()];
-		memcpy(this->m_uvCoordsRaw, &(parser.UVcoordsRaw)[0], parser.UVcoordsRaw.size() * sizeof(float));
+		if (parser.verticesRaw.size() > 0)
+		{
+			this->m_verticesRaw = new float[parser.verticesRaw.size()];
+			memcpy(this->m_verticesRaw, &(parser.verticesRaw)[0], parser.verticesRaw.size() * sizeof(float));
+		}
+
+		if (parser.UVcoordsRaw.size() > 0)
+		{
+			this->m_uvCoordsRaw = new float[parser.UVcoordsRaw.size()];
+			memcpy(this->m_uvCoordsRaw, &(parser.UVcoordsRaw)[0], parser.UVcoordsRaw.size() * sizeof(float));
+		}
+
+		if (parser.vertices.size() > 0)
+		{
+			this->m_vertices = new CVector3[parser.vertices.size()];
+			memcpy(this->m_vertices, &(parser.vertices)[0], parser.vertices.size() * sizeof(CVector3));
+		}
+
+		if (parser.UVcoords.size() > 0)
+		{
+			this->m_UVCoords = new CVector3[parser.UVcoords.size()];
+			memcpy(this->m_UVCoords, &(parser.UVcoords)[0], parser.UVcoords.size() * sizeof(CVector3));
+		}
 
 		this->m_numFaces = parser.indices.size() / 3;
 		this->m_numVertices = parser.vertices.size();
 		this->m_numUVCoords = parser.UVcoords.size();
+
+		m_Initialized = true;
+
+		return true;
 	}
 
-	return parser.Success;
+	return false;
 }
 
 /**/
@@ -117,6 +142,12 @@ void C3DModel_3DS::reset()
 
 	m_graphicsMemoryObjectId = 0;
 	m_shaderProgramId = 0;
+}
+
+/**/
+void C3DModel_3DS::computeFaceNormals()
+{
+
 }
 
 /**/
@@ -241,9 +272,15 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 
 		for (size_t i = 0; i < numb_vertices; i++)
 		{
+			CVector3 vertex;
+
 			verticesRaw.push_back(ReadFloat());
 			verticesRaw.push_back(ReadFloat());
 			verticesRaw.push_back(ReadFloat());
+
+			auto it = verticesRaw.rbegin();
+			vertex.setValues(it[2], it[1], it[0]);
+			vertices.push_back(vertex);
 		}
 
 		counter = chunk_size;
@@ -262,7 +299,7 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 		}
 
 		if (ReadInt() == TRI_SMOOTH)
-			ReadChunk(TRI_SMOOTH); // TODO: ReadSmoothingChunk
+			ReadChunk(TRI_SMOOTH);
 
 		counter = chunk_size;
 	}
@@ -272,8 +309,14 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 		cout << "      Found (" << numVertices << ") number of uv vertices" << endl;
 		for (size_t i = 0; i < numVertices; i++)
 		{
+			CVector3 vertex;
+
 			UVcoordsRaw.push_back(ReadFloat());
 			UVcoordsRaw.push_back(ReadFloat());
+
+			auto it = UVcoordsRaw.rbegin();
+			vertex.setValues(it[1], it[0], -1);
+			UVcoords.push_back(vertex);
 		}
 		counter = chunk_size;
 	}
@@ -389,7 +432,7 @@ bool C3DModel_3DS::C3DS_Parser::ReadPrimaryChunk()
 		}
 		bin3ds.seekg(2, ios::beg);
 		ReadChunk(MAIN3DS);
+		return true;
 	}
-	else return true;
 	return false;
 }

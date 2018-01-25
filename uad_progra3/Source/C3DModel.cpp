@@ -59,6 +59,7 @@ bool C3DModel::loadFromFile(const char * const filename)
 		cout << "Normals: " << m_numNormals << endl;
 		cout << "UVCoords: " << m_numUVCoords << endl;
 		cout << "Faces: " << m_numFaces << endl;
+		cout << this->toString() << endl;
 
 		// Check for MAX number of faces
 		if (m_numVertices >= 65535 || m_numNormals >= 65535 || m_numUVCoords >= 65535)
@@ -112,7 +113,6 @@ C3DModel * C3DModel::load(const wchar_t * filename)
 			cout << "ERROR: Unsupported file type" << endl;
 			return nullptr;
 		}
-
 	}
 	else
 	{
@@ -177,9 +177,9 @@ std::string C3DModel::toString()
 	{
 		res.append(to_string(m_vertexIndices[i]));
 		res.append("/");
-		res.append(to_string(m_UVindices[i]));
+		//res.append(to_string(m_UVindices[i]));
 		res.append("/");
-		res.append(to_string(m_normalIndices[i]));
+		//res.append(to_string(m_normalIndices[i]));
 
 		res.append(" ");
 
@@ -187,9 +187,9 @@ std::string C3DModel::toString()
 
 		res.append(to_string(m_vertexIndices[i]));
 		res.append("/");
-		res.append(to_string(m_UVindices[i]));
+		//res.append(to_string(m_UVindices[i]));
 		res.append("/");
-		res.append(to_string(m_normalIndices[i]));
+		//res.append(to_string(m_normalIndices[i]));
 
 		res.append(" ");
 
@@ -197,9 +197,9 @@ std::string C3DModel::toString()
 
 		res.append(to_string(m_vertexIndices[i]));
 		res.append("/");
-		res.append(to_string(m_UVindices[i]));
+		//res.append(to_string(m_UVindices[i]));
 		res.append("/");
-		res.append(to_string(m_normalIndices[i]));
+		//res.append(to_string(m_normalIndices[i]));
 
 		res.append("\n");
 	}

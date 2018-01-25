@@ -4,6 +4,8 @@
 #define C3DMODEL_3DS_H
 
 #include <string>
+#include <vector>
+#include <fstream>
 using namespace std;
 
 #include "../C3DModel.h"
@@ -15,6 +17,7 @@ private:
 	// Methods to read a model in the .obj file format
 	bool readFile(const char * const filename);       // Read object from file
 	void reset();                                     // Cleanup any allocated memory
+	void computeFaceNormals();
 
 	class C3DS_Parser
 	{
