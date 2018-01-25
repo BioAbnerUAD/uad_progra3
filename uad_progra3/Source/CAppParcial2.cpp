@@ -12,7 +12,6 @@ using namespace std;
 #include "../Include/C3DModel.h"
 #include "../Include/LoadTGA.h"
 #include "../Include/CWideStringHelper.h"
-#include "../UTFConvert.h"
 
 /* */
 CAppParcial2::CAppParcial2() : 
@@ -313,7 +312,7 @@ void CAppParcial2::render()
 }
 
 /* */
-bool CAppParcial2::load3DModel(const wchar_t * const filename)
+bool CAppParcial2::load3DModel(const char * const filename)
 {
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
@@ -335,10 +334,10 @@ bool CAppParcial2::load3DModel(const wchar_t * const filename)
 	unloadCurrent3DModel();
 	
 	// Create new 3D object
-	m_p3DModel = C3DModel::load((wchar_t*)filename);
+	m_p3DModel = new C3DModel();
 
 	// Load object from file
-	bool loaded = m_p3DModel->isInitialized();
+	bool loaded = m_p3DModel->loadFromFile(filename);
 
 	if (loaded)
 	{
@@ -399,7 +398,7 @@ void CAppParcial2::onF2(int mods)
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner   = NULL;
-	ofn.lpstrFilter = L"Obj Files\0*.obj\0" L"3D Studio Files\0*.3ds\0";
+	ofn.lpstrFilter = L"Obj Files\0*.obj\0All files\0*.*\0";
 	ofn.lpstrFile   = &wideStringBuffer[0];
 	ofn.nMaxFile    = MAX_PATH;
 	ofn.lpstrTitle  = L"Select a model file";
@@ -412,7 +411,7 @@ void CAppParcial2::onF2(int mods)
 		WideCharToMultiByte(CP_UTF8, 0, &wideStringBuffer[0], (int)wideStringBuffer.size(), &multibyteString[0], size_needed, NULL, NULL);
 		cout << "Filename to load: " << multibyteString.c_str() << endl;
 
-		if (!load3DModel(wideStringBuffer.c_str()))
+		if (!load3DModel(multibyteString.c_str()))
 		{
 			cout << "Unable to load 3D model" << endl;
 		}

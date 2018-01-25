@@ -40,8 +40,6 @@ public:
 	CAppParcial2(int window_width, int window_height);
 	~CAppParcial2();
 
-	CVector3 *getObjectPosition() { return &m_objectPosition; }
-
 	// Inherited methods from CApp
 	// ---------------------------
 
@@ -67,7 +65,7 @@ public:
 private:
 
 	// Load/unload 3D model
-	bool load3DModel(const wchar_t * const filename);
+	bool load3DModel(const char * const filename);
 	void unloadCurrent3DModel();
 
 	// Move camera away/closer
