@@ -8,6 +8,7 @@
 #include "C3DModel.h"
 #include "CVector3.h"
 
+#define DEFAULT_MOVEMENT_SPEED 0.5
 #define DEFAULT_ROTATION_SPEED 90.0
 
 // Class that inherits from Base class CApp
@@ -58,14 +59,18 @@ public:
 	// Methods specific to CAppParcial2 only
 	// -------------------------------------
 
-	// This derived class only uses F2/F3
+	// Derived class key input responces
 	void onF2(int mods);
 	void onF3(int mods);
+	void onArrowUp(int mods);
+	void onArrowDown(int mods);
+	void onArrowLeft(int mods);
+	void onArrowRight(int mods);
 	
 private:
 
 	// Load/unload 3D model
-	bool load3DModel(const char * const filename);
+	bool load3DModel(const wchar_t * const filename);
 	void unloadCurrent3DModel();
 
 	// Move camera away/closer

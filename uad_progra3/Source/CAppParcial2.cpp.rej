@@ -1,0 +1,14 @@
+diff a/uad_progra3/Source/CAppParcial2.cpp b/uad_progra3/Source/CAppParcial2.cpp	(rejected hunks)
+@@ -334,10 +334,10 @@
+ 	unloadCurrent3DModel();
+ 	
+ 	// Create new 3D object
+-	m_p3DModel = C3DModel::load((wchar_t*)filename);
++	m_p3DModel = new C3DModel();
+ 
+ 	// Load object from file
+-	bool loaded = m_p3DModel->isInitialized();
++	bool loaded = m_p3DModel->loadFromFile(filename);
+ 
+ 	if (loaded)
+ 	{

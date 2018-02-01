@@ -41,7 +41,7 @@ public:
 	virtual ~C3DModel();
 
 	bool isInitialized() const { return m_Initialized; }
-	bool loadFromFile(const char * const filename);
+	bool loadFromFile(const wchar_t * const filename);
 	static C3DModel* load(const wchar_t * filename);
 	virtual bool readFile(const char * filename) = 0;
 

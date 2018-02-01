@@ -147,7 +147,25 @@ void C3DModel_3DS::reset()
 /**/
 void C3DModel_3DS::computeFaceNormals()
 {
+	m_normals = new CVector3[m_numFaces];
+	m_normalsRaw = new float[m_numFaces * 3];
+	m_normalIndices = new unsigned short[m_numFaces * 3];
+	for (size_t i = 0; i < m_numFaces; i++)
+	{
+		size_t ivert = i * 3;
+		CVector3 A = m_vertices[m_vertexIndices[ivert]];
+		CVector3 B = m_vertices[m_vertexIndices[ivert + 1]];
+		CVector3 C = m_vertices[m_vertexIndices[ivert + 2]];
 
+		m_normals[i] = (B - A).cross(C - B);
+		m_normalsRaw[ivert] = m_normals[i].getX();
+		m_normalsRaw[ivert + 1] = m_normals[i].getY();
+		m_normalsRaw[ivert + 2] = m_normals[i].getZ();
+
+		m_normalIndices[ivert] = i;
+		m_normalIndices[ivert + 1] = i;
+		m_normalIndices[ivert + 2] = i;
+	}
 }
 
 /**/

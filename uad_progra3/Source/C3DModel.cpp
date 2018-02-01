@@ -41,7 +41,7 @@ C3DModel::~C3DModel()
 	cout << "Destructor: C3DModel()" << endl;
 }
 
-bool C3DModel::loadFromFile(const char * const filename)
+bool C3DModel::loadFromFile(const wchar_t * const filename)
 {
 	bool readFileOk = false;
 
@@ -49,7 +49,7 @@ bool C3DModel::loadFromFile(const char * const filename)
 	reset();
 
 	// First pass is to count the number of vertices, normals, UVs, faces
-	readFileOk = readFile(filename);
+	readFileOk = readFile(UTFConvert::convert_UTF16_UTF8((wchar_t*)filename));
 
 	if (readFileOk)
 	{
@@ -120,7 +120,7 @@ C3DModel * C3DModel::load(const wchar_t * filename)
 		return nullptr;
 	}
 
-	newObject->loadFromFile(UTFConvert::convert_UTF16_UTF8((wchar_t *)filename));
+	newObject->loadFromFile((wchar_t *)filename);
 	return newObject;
 }
 
@@ -177,7 +177,7 @@ std::string C3DModel::toString()
 	{
 		res.append(to_string(m_vertexIndices[i]));
 		res.append("/");
-		//res.append(to_string(m_UVindices[i]));
+		res.append(to_string(m_UVindices[i]));
 		res.append("/");
 		//res.append(to_string(m_normalIndices[i]));
 
@@ -187,7 +187,7 @@ std::string C3DModel::toString()
 
 		res.append(to_string(m_vertexIndices[i]));
 		res.append("/");
-		//res.append(to_string(m_UVindices[i]));
+		res.append(to_string(m_UVindices[i]));
 		res.append("/");
 		//res.append(to_string(m_normalIndices[i]));
 
@@ -197,7 +197,7 @@ std::string C3DModel::toString()
 
 		res.append(to_string(m_vertexIndices[i]));
 		res.append("/");
-		//res.append(to_string(m_UVindices[i]));
+		res.append(to_string(m_UVindices[i]));
 		res.append("/");
 		//res.append(to_string(m_normalIndices[i]));
 

@@ -18,6 +18,8 @@ public:
 
 	CVector3& operator=(const CVector3 &other);
 	CVector3& operator+=(const CVector3 &other);
+	CVector3 cross(const CVector3 &other);
+	CVector3 operator-(const CVector3 &other);
 
 	void setValues(float _x, float _y, float _z);
 	void setValues(float *values);

@@ -1,0 +1,10 @@
+diff a/uad_progra3/Include/CAppParcial2.h b/uad_progra3/Include/CAppParcial2.h	(rejected hunks)
+@@ -65,7 +65,7 @@
+ private:
+ 
+ 	// Load/unload 3D model
+-	bool load3DModel(const wchar_t * const filename);
++	bool load3DModel(const char * const filename);
+ 	void unloadCurrent3DModel();
+ 
+ 	// Move camera away/closer
