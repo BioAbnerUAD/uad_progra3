@@ -165,6 +165,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CConsoleLogger.h" />
+    <ClInclude Include="CFileLogger.h" />
+    <ClInclude Include="CLogger.h" />
     <ClInclude Include="Include\C3DModel.h" />
     <ClInclude Include="Include\C3DModel_3DS.h" />
     <ClInclude Include="Include\C3DModel_Obj.h" />
@@ -190,6 +193,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CConsoleLogger.cpp" />
+    <ClCompile Include="CFileLogger.cpp" />
+    <ClCompile Include="CLogger.cpp" />
     <ClCompile Include="Dependencies\GLAD\glad-4.3-core\src\glad.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
