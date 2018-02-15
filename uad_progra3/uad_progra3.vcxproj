@@ -165,9 +165,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CConsoleLogger.h" />
-    <ClInclude Include="CFileLogger.h" />
-    <ClInclude Include="CLogger.h" />
     <ClInclude Include="Include\C3DModel.h" />
     <ClInclude Include="Include\C3DModel_3DS.h" />
     <ClInclude Include="Include\C3DModel_Obj.h" />
@@ -178,9 +175,12 @@
     <ClInclude Include="Include\CCircularDoubleLinkedList.h" />
     <ClInclude Include="Include\CCircularDoubleLinkedListNode.h" />
     <ClInclude Include="Include\CColor.h" />
+    <ClInclude Include="Include\CConsoleLogger.h" />
+    <ClInclude Include="Include\CFileLogger.h" />
     <ClInclude Include="Include\CGameMenu.h" />
     <ClInclude Include="Include\CGameMenuItem.h" />
     <ClInclude Include="Include\CGameWindow.h" />
+    <ClInclude Include="Include\CLogger.h" />
     <ClInclude Include="Include\COpenGLRenderer.h" />
     <ClInclude Include="Include\CVector3.h" />
     <ClInclude Include="Include\CWideStringHelper.h" />
@@ -193,9 +193,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CConsoleLogger.cpp" />
-    <ClCompile Include="CFileLogger.cpp" />
-    <ClCompile Include="CLogger.cpp" />
     <ClCompile Include="Dependencies\GLAD\glad-4.3-core\src\glad.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -209,9 +206,12 @@
     <ClCompile Include="Source\CAppParcial2.cpp" />
     <ClCompile Include="Source\CCircularDoubleLinkedList.cpp" />
     <ClCompile Include="Source\CCircularDoubleLinkedListNode.cpp" />
+    <ClCompile Include="Source\CConsoleLogger.cpp" />
+    <ClCompile Include="Source\CFileLogger.cpp" />
     <ClCompile Include="Source\CGameMenu.cpp" />
     <ClCompile Include="Source\CGameMenuItem.cpp" />
     <ClCompile Include="Source\CGameWindow.cpp" />
+    <ClCompile Include="Source\CLogger.cpp" />
     <ClCompile Include="Source\COpenGLRenderer.cpp" />
     <ClCompile Include="Source\CVector3.cpp" />
     <ClCompile Include="Source\LoadShaders.cpp" />

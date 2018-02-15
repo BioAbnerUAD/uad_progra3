@@ -87,13 +87,13 @@
     <ClInclude Include="Include\UTFConvert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CLogger.h">
+    <ClInclude Include="Include\CConsoleLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CConsoleLogger.h">
+    <ClInclude Include="Include\CFileLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CFileLogger.h">
+    <ClInclude Include="Include\CLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -149,13 +149,13 @@
     <ClCompile Include="Source\C3DModel_Obj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CLogger.cpp">
+    <ClCompile Include="Source\CConsoleLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CConsoleLogger.cpp">
+    <ClCompile Include="Source\CFileLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CFileLogger.cpp">
+    <ClCompile Include="Source\CLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
