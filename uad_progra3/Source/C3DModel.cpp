@@ -1,9 +1,8 @@
 #include "../stdafx.h"
 
-#include <iostream>
 #include <algorithm>
-using namespace std;
 
+#include "../Include/CLogger.h"
 #include "../Include/C3DModel_Obj.h"
 #include "../Include/C3DModel_3DS.h"
 #include "../Include/C3DModel.h"
@@ -32,13 +31,13 @@ C3DModel::C3DModel()
 	m_graphicsMemoryObjectId(0),
 	m_shaderProgramId(0)
 {
-	cout << "Constructor: C3DModel()" << endl;
+	Log << "Constructor: C3DModel()" << endl;
 }
 
 /* */
 C3DModel::~C3DModel()
 {
-	cout << "Destructor: C3DModel()" << endl;
+	Log << "Destructor: C3DModel()" << endl;
 }
 
 bool C3DModel::loadFromFile(const wchar_t * const filename)
@@ -54,18 +53,18 @@ bool C3DModel::loadFromFile(const wchar_t * const filename)
 	if (readFileOk)
 	{
 		// Display count
-		cout << "Finished reading 3D model" << endl;
-		cout << "Vertices: " << m_numVertices << endl;
-		cout << "Normals: " << m_numNormals << endl;
-		cout << "UVCoords: " << m_numUVCoords << endl;
-		cout << "Faces: " << m_numFaces << endl;
-		cout << this->toString() << endl;
+		Log << "Finished reading 3D model" << endl;
+		Log << "Vertices: " << m_numVertices << endl;
+		Log << "Normals: " << m_numNormals << endl;
+		Log << "UVCoords: " << m_numUVCoords << endl;
+		Log << "Faces: " << m_numFaces << endl;
+		Log << this->toString() << endl;
 
 		// Check for MAX number of faces
 		if (m_numVertices >= 65535 || m_numNormals >= 65535 || m_numUVCoords >= 65535)
 		{
-			cout << "Error: object cannot have more than 65535 vertices" << endl;
-			cout << "Object attempted to load has: " << m_numVertices << " vertices" << endl;
+			Log << "Error: object cannot have more than 65535 vertices" << endl;
+			Log << "Object attempted to load has: " << m_numVertices << " vertices" << endl;
 			return false;
 		}
 
@@ -87,7 +86,7 @@ bool C3DModel::loadFromFile(const wchar_t * const filename)
 	}
 	else
 	{
-		cout << "Error ocurred while reading 3D model." << endl;
+		Log << "Error ocurred while reading 3D model." << endl;
 	}
 
 	return readFileOk;
@@ -110,13 +109,13 @@ C3DModel * C3DModel::load(const wchar_t * filename)
 		else if (fileExtension == L"3ds") newObject = new C3DModel_3DS();
 		else
 		{
-			cout << "ERROR: Unsupported file type" << endl;
+			Log << "ERROR: Unsupported file type" << endl;
 			return nullptr;
 		}
 	}
 	else
 	{
-		cout << "ERROR: Cannot determine the file type" << endl;
+		Log << "ERROR: Cannot determine the file type" << endl;
 		return nullptr;
 	}
 

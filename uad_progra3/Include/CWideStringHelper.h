@@ -4,8 +4,9 @@
 #define _WIDESTRING_HELPER_H
 
 #include <Shlwapi.h>
-#include <iostream>
+#include "CLogger.h"
 #include <vector>
+
 using namespace std;
 
 class CWideStringHelper
@@ -187,7 +188,7 @@ public:
 
 		if (numWideCharsNeeded == 0)
 		{
-			cout << "Failed converting UTF-8 string to UTF-16" << endl;
+			Log << "Failed converting UTF-8 string to UTF-16" << endl;
 			return nullptr;
 		}
 
@@ -203,7 +204,7 @@ public:
 		if (numCharsConverted == 0 || 
 			numWideCharsNeeded != numCharsConverted)
 		{
-			cout << "Failed converting UTF-8 string to UTF-16" << endl;
+			Log << "Failed converting UTF-8 string to UTF-16" << endl;
 			return nullptr;
 		}
 
@@ -238,7 +239,7 @@ public:
 
 		if (numCharsNeeded == 0)
 		{
-			cout << "Failed converting UTF-16 string to UTF-8" << endl;
+			Log << "Failed converting UTF-16 string to UTF-8" << endl;
 			return nullptr;
 		}
 
@@ -256,7 +257,7 @@ public:
 		if (numCharsConverted == 0 ||
 			numCharsNeeded != numCharsConverted)
 		{
-			cout << "Failed converting UTF-16 string to UTF-8" << endl;
+			Log << "Failed converting UTF-16 string to UTF-8" << endl;
 			return nullptr;
 		}
 

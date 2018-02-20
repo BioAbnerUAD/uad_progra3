@@ -2,10 +2,8 @@
 
 #include "windows.h"
 
-#include <iostream>
 #include <vector>
 #include <string>
-using namespace std;
 
 #include "../Include/Globals.h"
 #include "../Include/CAppParcial2.h"
@@ -22,7 +20,7 @@ CAppParcial2::CAppParcial2() :
 	m_objectPosition{ 0.0f, 0.0f, 0.0f },
 	m_rotationSpeed{ DEFAULT_ROTATION_SPEED }
 {
-	cout << "Constructor: CAppParcial2()" << endl;
+	Log << "Constructor: CAppParcial2()" << endl;
 }
 
 /* */
@@ -34,13 +32,13 @@ CAppParcial2::CAppParcial2(int window_width, int window_height) :
 	m_objectPosition{ 0.0f, 0.0f, 0.0f },
 	m_rotationSpeed{ DEFAULT_ROTATION_SPEED }
 {
-	cout << "Constructor: CAppParcial2(int window_width, int window_height)" << endl;
+	Log << "Constructor: CAppParcial2(int window_width, int window_height)" << endl;
 }
 
 /* */
 CAppParcial2::~CAppParcial2()
 {
-	cout << "Destructor: ~CAppParcial2()" << endl;
+	Log << "Destructor: ~CAppParcial2()" << endl;
 	unloadCurrent3DModel();
 }
 
@@ -68,7 +66,7 @@ void CAppParcial2::run()
 			}
 
 			// Enter main loop
-			cout << "Entering Main loop" << endl;
+			Log << "Entering Main loop" << endl;
 			getGameWindow()->mainLoop(this);
 		}
 	}
@@ -77,7 +75,7 @@ void CAppParcial2::run()
 /* */
 bool CAppParcial2::initializeMenu()
 {
-	cout << "CAppParcial2::initializeMenu()" << endl;
+	Log << "CAppParcial2::initializeMenu()" << endl;
 
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
@@ -91,10 +89,10 @@ bool CAppParcial2::initializeMenu()
 		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_MENU, wresourceFilenameFS, resourceFilenameFS) ||
 		!CWideStringHelper::GetResourceFullPath(MENU_TEXTURE_FILE, wresourceFilenameTexture, resourceFilenameTexture))
 	{
-		cout << "ERROR: Unable to find one or more resources: " << endl;
-		cout << "  " << VERTEX_SHADER_MENU << endl;
-		cout << "  " << FRAGMENT_SHADER_MENU << endl;
-		cout << "  " << MENU_TEXTURE_FILE << endl;
+		Log << "ERROR: Unable to find one or more resources: " << endl;
+		Log << "  " << VERTEX_SHADER_MENU << endl;
+		Log << "  " << FRAGMENT_SHADER_MENU << endl;
+		Log << "  " << MENU_TEXTURE_FILE << endl;
 		return false;
 	}
 
@@ -324,9 +322,9 @@ bool CAppParcial2::load3DModel(const wchar_t * const filename)
 	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_3D_OBJECTS, wresourceFilenameVS, resourceFilenameVS) ||
 		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_3D_OBJECTS, wresourceFilenameFS, resourceFilenameFS))
 	{
-		cout << "ERROR: Unable to find one or more resources: " << endl;
-		cout << "  " << VERTEX_SHADER_3D_OBJECTS << endl;
-		cout << "  " << FRAGMENT_SHADER_3D_OBJECTS << endl;
+		Log << "ERROR: Unable to find one or more resources: " << endl;
+		Log << "  " << VERTEX_SHADER_3D_OBJECTS << endl;
+		Log << "  " << FRAGMENT_SHADER_3D_OBJECTS << endl;
 
 		return false;
 	}
@@ -410,11 +408,11 @@ void CAppParcial2::onF2(int mods)
 		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wideStringBuffer[0], (int)wideStringBuffer.size(), NULL, 0, NULL, NULL);
 		std::string multibyteString(size_needed, 0);
 		WideCharToMultiByte(CP_UTF8, 0, &wideStringBuffer[0], (int)wideStringBuffer.size(), &multibyteString[0], size_needed, NULL, NULL);
-		cout << "Filename to load: " << multibyteString.c_str() << endl;
+		Log << "Filename to load: " << multibyteString.c_str() << endl;
 
 		if (!load3DModel(wideStringBuffer.c_str()))
 		{
-			cout << "Unable to load 3D model" << endl;
+			Log << "Unable to load 3D model" << endl;
 		}
 	}
 }
@@ -480,7 +478,7 @@ void CAppParcial2::executeMenuAction()
 			break;
 		case 2:
 			// Not implemented
-			cout << "<MENU OPTION NOT IMPLEMENTED>" << endl;
+			Log << "<MENU OPTION NOT IMPLEMENTED>" << endl;
 			break;
 		case 3:
 			if (getGameWindow() != NULL)

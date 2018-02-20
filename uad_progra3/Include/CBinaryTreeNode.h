@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include "CLogger.h"
 #include <vector>
 using namespace std;
 
@@ -177,7 +177,7 @@ bool CBinaryTreeNode<T>::insert(T * pVal)
 	{
 		// *pVal == *m_pData stored in this node
 		// We're not keeping duplicates in this implementation, element is discarded (not added to the tree)
-		cout << "CBinaryTreeNode<T>::insert() : We're not keeping duplicates in this implementation, element is discarded (not added to the tree)" << endl;
+		Log << "CBinaryTreeNode<T>::insert() : We're not keeping duplicates in this implementation, element is discarded (not added to the tree)" << endl;
 	}
 
 	return inserted;

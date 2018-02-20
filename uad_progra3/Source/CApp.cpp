@@ -1,14 +1,13 @@
 #include "../stdafx.h"
 
-#include <iostream>
-using namespace std;
+#include "../Include/CLogger.h"
 
 #include "../Include/CApp.h"
 
 /* */
 CApp::CApp()
 {
-	cout << "Constructor: CApp()" << endl;
+	Log << "Constructor: CApp()" << endl;
 
 	// Create OpenGLRenderer Object
 	m_OpenGLRenderer = new COpenGLRenderer();
@@ -24,7 +23,7 @@ CApp::CApp()
 /* */
 CApp::CApp(int window_width, int window_height)
 {
-	cout << "Constructor: CApp(int window_width, int window_height)" << endl;
+	Log << "Constructor: CApp(int window_width, int window_height)" << endl;
 	
 	// Create OpenGLRenderer Object
 	m_OpenGLRenderer = new COpenGLRenderer();
@@ -40,12 +39,12 @@ CApp::CApp(int window_width, int window_height)
 /* */
 CApp::~CApp()
 {
-	cout << "Destructor: ~CApp()" << endl;
+	Log << "Destructor: ~CApp()" << endl;
 
 	// Free CGameWindow object resources
 	if (m_Window != NULL)
 	{
-		cout << "Delete m_Window" << endl;
+		Log << "Delete m_Window" << endl;
 		delete m_Window;
 	}
 
@@ -57,7 +56,7 @@ CApp::~CApp()
 		// Cleanup call deleteVertexArrayObject
 		m_Menu->cleanupGraphicsObjects(m_OpenGLRenderer);
 
-		cout << "Delete m_Menu" << endl;
+		Log << "Delete m_Menu" << endl;
 		delete m_Menu;
 	}
 
@@ -66,7 +65,7 @@ CApp::~CApp()
 	// Free COpenGLRenderer object resources
 	if (m_OpenGLRenderer != NULL)
 	{
-		cout << "Delete m_OpenGLRenderer" << endl;
+		Log << "Delete m_OpenGLRenderer" << endl;
 		delete m_OpenGLRenderer;
 	}
 
@@ -115,8 +114,8 @@ void CApp::setMenuActive(bool active)
 				m_OpenGLRenderer->setClearScreenColor(0.88f, 0.88f, 0.88f);
 			}
 
-			cout << "Menu is active" << endl;
-			cout << "Selected option is #" << m_Menu->getSelectedMenuItemNumber() << endl;
+			Log << "Menu is active" << endl;
+			Log << "Selected option is #" << m_Menu->getSelectedMenuItemNumber() << endl;
 		}
 		else
 		{
@@ -125,7 +124,7 @@ void CApp::setMenuActive(bool active)
 				m_OpenGLRenderer->setClearScreenColor(0.15f, 0.75f, 0.75f);
 			}
 
-			cout << "Menu is NOT active" << endl;
+			Log << "Menu is NOT active" << endl;
 		}
 	}
 }
@@ -135,7 +134,7 @@ void CApp::executeMenuAction()
 {
 	if (m_Menu != NULL)
 	{
-		cout << "Execute Menu action" << endl;
+		Log << "Execute Menu action" << endl;
 	}
 }
 
@@ -145,8 +144,8 @@ void CApp::selectNextMenuItem()
 	if (m_Menu != NULL)
 	{
 		m_Menu->selectMenuItem(true);
-		cout << "Select next menu option" << endl;
-		cout << "Selected option is #" << m_Menu->getSelectedMenuItemNumber() << endl;
+		Log << "Select next menu option" << endl;
+		Log << "Selected option is #" << m_Menu->getSelectedMenuItemNumber() << endl;
 	}
 }
 
@@ -156,8 +155,8 @@ void CApp::selectPrevMenuItem()
 	if (m_Menu != NULL)
 	{
 		m_Menu->selectMenuItem(false);
-		cout << "Select prev menu option" << endl;
-		cout << "Selected option is #" << m_Menu->getSelectedMenuItemNumber() << endl;
+		Log << "Select prev menu option" << endl;
+		Log << "Selected option is #" << m_Menu->getSelectedMenuItemNumber() << endl;
 	}
 }
 

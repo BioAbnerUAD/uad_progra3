@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 
+#define Log CLogger::GetInstance()->Out()
+
 class CLogger
 {
 protected:

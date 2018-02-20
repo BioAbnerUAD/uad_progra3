@@ -3,8 +3,7 @@
 #ifndef CCIRCULARDOUBLE_LL_H
 #define CCIRCULARDOUBLE_LL_H
 
-#include <iostream>
-using namespace std;
+#include "CLogger.h"
 
 #include "CCircularDoubleLinkedListNode.h"
 
@@ -37,7 +36,7 @@ template <class T>
 CCircularDoubleLinkedList<T>::CCircularDoubleLinkedList() :
 	m_FirstNode{ NULL }
 {
-	cout << "Constructor: CCircularDoubleLinkedList()" << endl;
+	Log << "Constructor: CCircularDoubleLinkedList()" << endl;
 }
 
 /*
@@ -45,7 +44,7 @@ CCircularDoubleLinkedList<T>::CCircularDoubleLinkedList() :
 template <class T>
 CCircularDoubleLinkedList<T>::~CCircularDoubleLinkedList()
 {
-	cout << "Destructor: CCircularDoubleLinkedList()" << endl;
+	Log << "Destructor: CCircularDoubleLinkedList()" << endl;
 
 	if (m_FirstNode != NULL) 
 	{
@@ -70,7 +69,7 @@ CCircularDoubleLinkedList<T>::~CCircularDoubleLinkedList()
 template <class T>
 bool CCircularDoubleLinkedList<T>::createNode(T *newDataItem)
 {
-	cout << "CCircularDoubleLinkedList<T>::createNode()" << endl;
+	Log << "CCircularDoubleLinkedList<T>::createNode()" << endl;
 
 	CCircularDoubleLinkedListNode<T> *newNode = new CCircularDoubleLinkedListNode<T>(newDataItem);
 	return addNode(newNode);
@@ -81,7 +80,7 @@ bool CCircularDoubleLinkedList<T>::createNode(T *newDataItem)
 template <class T>
 bool CCircularDoubleLinkedList<T>::addNode(CCircularDoubleLinkedListNode<T> *newNode)
 {
-	cout << "CCircularDoubleLinkedList<T>::addNode()" << endl;
+	Log << "CCircularDoubleLinkedList<T>::addNode()" << endl;
 
 	if (m_FirstNode == NULL)
 	{

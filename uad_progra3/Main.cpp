@@ -3,17 +3,15 @@
 
 #include "stdafx.h"
 
-#include <iostream>
-using namespace std;
-
 #include "Include/CGameWindow.h"
 #include "Include/CApp.h"
 #include "Include/CAppParcial2.h"
 #include "Include/CLogger.h"
 
-int main()
+int main(int argc, char** argv)
 {
-	CLogger::GetInstance()->Out() << "HOLA MUNDO" << endl;
+	/*for (size_t i = 0; i < argc; i++)
+		std::cout << argv[i] << std::endl;*/
 
 	CApp *app = NULL;                  // Pointer to BASE class CApp
 	app = new CAppParcial2(800, 600);  // Using pointer to base class, create a new object of DERIVED class CAppParcial2

@@ -1,20 +1,20 @@
 #include "../stdafx.h"
-#include <iostream>
 #include <sstream>
 using namespace std;
 
+#include "../Include/CLogger.h"
 #include "../Include/C3DModel_3DS.h"
 
 /* */
 C3DModel_3DS::C3DModel_3DS() : C3DModel()
 {
-	cout << "Constructor: C3DModel_3DS()" << endl;
+	Log << "Constructor: C3DModel_3DS()" << endl;
 }
 
 /* */
 C3DModel_3DS::~C3DModel_3DS()
 {
-	cout << "Destructor: C3DModel_3DS()" << endl;
+	Log << "Destructor: C3DModel_3DS()" << endl;
 	reset();
 }
 
@@ -75,55 +75,55 @@ void C3DModel_3DS::reset()
 {
 	if (m_vertexIndices != NULL)
 	{
-		cout << "deleting vertex indices" << endl;
+		Log << "deleting vertex indices" << endl;
 		delete[] m_vertexIndices;
 		m_vertexIndices = NULL;
 	}
 	if (m_normalIndices != NULL)
 	{
-		cout << "deleting normal indices" << endl;
+		Log << "deleting normal indices" << endl;
 		delete[] m_normalIndices;
 		m_normalIndices = NULL;
 	}
 	if (m_UVindices != NULL)
 	{
-		cout << "deleting UV indices" << endl;
+		Log << "deleting UV indices" << endl;
 		delete[] m_UVindices;
 		m_UVindices = NULL;
 	}
 	if (m_vertices != NULL)
 	{
-		cout << "deleting vertices" << endl;
+		Log << "deleting vertices" << endl;
 		delete[] m_vertices;
 		m_vertices = NULL;
 	}
 	if (m_verticesRaw != NULL)
 	{
-		cout << "deleting vertices (float)" << endl;
+		Log << "deleting vertices (float)" << endl;
 		delete[] m_verticesRaw;
 		m_verticesRaw = NULL;
 	}
 	if (m_normals != NULL)
 	{
-		cout << "deleting normals" << endl;
+		Log << "deleting normals" << endl;
 		delete[] m_normals;
 		m_normals = NULL;
 	}
 	if (m_normalsRaw != NULL)
 	{
-		cout << "deleting normals (float)" << endl;
+		Log << "deleting normals (float)" << endl;
 		delete[] m_normalsRaw;
 		m_normalsRaw = NULL;
 	}
 	if (m_UVCoords != NULL)
 	{
-		cout << "deleting UV coords" << endl;
+		Log << "deleting UV coords" << endl;
 		delete[] m_UVCoords;
 		m_UVCoords = NULL;
 	}
 	if (m_uvCoordsRaw != NULL)
 	{
-		cout << "deleting uvCoords (float)" << endl;
+		Log << "deleting uvCoords (float)" << endl;
 		delete[] m_uvCoordsRaw;
 		m_uvCoordsRaw = NULL;
 	}
@@ -267,7 +267,7 @@ int C3DModel_3DS::C3DS_Parser::ReadName(bool isLongName)
 		return -1;
 	}
 
-	cout << "     Found name : " << temp_name << endl;
+	Log << "     Found name : " << temp_name << endl;
 	return 0;
 }
 
@@ -286,7 +286,7 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 	if (chunk_id == TRI_VERTEXL)
 	{
 		unsigned int numb_vertices = ReadInt();
-		cout << "      Found (" << numb_vertices << ") number of vertices" << endl;
+		Log << "      Found (" << numb_vertices << ") number of vertices" << endl;
 
 		for (size_t i = 0; i < numb_vertices; i++)
 		{
@@ -306,7 +306,7 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 	if (chunk_id == TRI_FACEL1)
 	{
 		unsigned int numb_faces = ReadInt();
-		cout << "      Found (" << numb_faces << ") number of faces" << endl;
+		Log << "      Found (" << numb_faces << ") number of faces" << endl;
 
 		for (size_t i = 0; i < numb_faces; i++)
 		{
@@ -324,7 +324,7 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 	if (chunk_id == TRI_MAPPINGCOORS)
 	{
 		unsigned short numVertices = ReadInt();
-		cout << "      Found (" << numVertices << ") number of uv vertices" << endl;
+		Log << "      Found (" << numVertices << ") number of uv vertices" << endl;
 		for (size_t i = 0; i < numVertices; i++)
 		{
 			CVector3 vertex;
@@ -349,11 +349,11 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 			switch (temp_int)
 			{
 			case KEYF3DS:
-				cout << ">> Found *Keyframer* chunk id of " << std::hex << KEYF3DS << std::dec << endl;
+				Log << ">> Found *Keyframer* chunk id of " << std::hex << KEYF3DS << std::dec << endl;
 				counter += ReadChunk(KEYF3DS);
 				break;
 			case EDIT3DS:
-				cout << ">> Found *Editor* chunk id of " << std::hex << EDIT3DS << std::dec << endl;
+				Log << ">> Found *Editor* chunk id of " << std::hex << EDIT3DS << std::dec << endl;
 				counter += ReadChunk(EDIT3DS);
 				break;
 			default: break;
@@ -389,7 +389,7 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 			case OBJ_UNKNWN01:counter += ReadChunk(OBJ_UNKNWN01); break;
 			case OBJ_UNKNWN02:counter += ReadChunk(OBJ_UNKNWN02); break;
 			case OBJ_TRIMESH:
-				cout << ">>>> Found Obj/Mesh chunk id of " << std::hex << OBJ_TRIMESH << std::dec << endl;
+				Log << ">>>> Found Obj/Mesh chunk id of " << std::hex << OBJ_TRIMESH << std::dec << endl;
 				counter += ReadChunk(OBJ_TRIMESH);
 				break;
 			case OBJ_LIGHT: counter += ReadChunk(OBJ_LIGHT); break;
@@ -401,15 +401,15 @@ unsigned long C3DModel_3DS::C3DS_Parser::ReadChunk(unsigned int chunk_id)
 			switch (temp_int)
 			{
 			case TRI_VERTEXL:
-				cout << ">>>> Found Object vertices chunk id of " << std::hex << TRI_VERTEXL << std::dec << endl;
+				Log << ">>>> Found Object vertices chunk id of " << std::hex << TRI_VERTEXL << std::dec << endl;
 				counter += ReadChunk(TRI_VERTEXL);
 				break;
 			case TRI_FACEL1:
-				cout << ">>>> Found Object faces (1) chunk id of " << std::hex << TRI_FACEL1 << std::dec << endl;
+				Log << ">>>> Found Object faces (1) chunk id of " << std::hex << TRI_FACEL1 << std::dec << endl;
 				counter += ReadChunk(TRI_FACEL1);
 				break;
 			case TRI_MAPPINGCOORS:
-				cout << ">>>> Found Mapping Coordinates chunk id of " << std::hex << TRI_MAPPINGCOORS << std::dec << endl;
+				Log << ">>>> Found Mapping Coordinates chunk id of " << std::hex << TRI_MAPPINGCOORS << std::dec << endl;
 				counter += ReadChunk(TRI_MAPPINGCOORS);
 				break;
 
@@ -439,13 +439,13 @@ bool C3DModel_3DS::C3DS_Parser::ReadPrimaryChunk()
 
 	if (ReadInt() == MAIN3DS)
 	{
-		cout << "> Found Main chunk id of " << std::hex << MAIN3DS << std::dec << endl;
+		Log << "> Found Main chunk id of " << std::hex << MAIN3DS << std::dec << endl;
 		bin3ds.seekg(28L, ios::beg);
 		version = ReadChar();
 		if (version < 3)
 		{
-			cout << "Sorry this lib can only read 3ds files of version 3.0 and higher" << endl;
-			cout << "The version of the file you want to read is: " << version << endl;
+			Log << "Sorry this lib can only read 3ds files of version 3.0 and higher" << endl;
+			Log << "The version of the file you want to read is: " << version << endl;
 			return true;
 		}
 		bin3ds.seekg(2, ios::beg);

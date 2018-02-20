@@ -3,8 +3,7 @@
 #ifndef CCIRCULARDOUBLELINKEDLISTNODE_H
 #define CCIRCULARDOUBLELINKEDLISTNODE_H
 
-#include <iostream>
-using namespace std;
+#include "CLogger.h"
 
 // Class that represents a node in a Double Linked list
 // This class is a template
@@ -52,7 +51,7 @@ CCircularDoubleLinkedListNode<T>::CCircularDoubleLinkedListNode() :
 	m_Parent{ NULL },
 	m_Child{ NULL }
 {
-	cout << "Constructor: CCircularDoubleLinkedListNode()" << endl;
+	Log << "Constructor: CCircularDoubleLinkedListNode()" << endl;
 }
 
 /*
@@ -65,7 +64,7 @@ CCircularDoubleLinkedListNode<T>::CCircularDoubleLinkedListNode(T *data) :
 	m_Parent{ NULL },
 	m_Child{ NULL }
 {
-	cout << "Constructor: CCircularDoubleLinkedListNode()" << endl;
+	Log << "Constructor: CCircularDoubleLinkedListNode()" << endl;
 }
 
 /*
@@ -73,7 +72,7 @@ CCircularDoubleLinkedListNode<T>::CCircularDoubleLinkedListNode(T *data) :
 template <class T>
 CCircularDoubleLinkedListNode<T>::~CCircularDoubleLinkedListNode()
 {
-	cout << "Destructor: CCircularDoubleLinkedListNode()" << endl;
+	Log << "Destructor: CCircularDoubleLinkedListNode()" << endl;
 
 	if (m_Data != NULL)
 	{

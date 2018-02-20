@@ -1,24 +1,23 @@
 #include "../stdafx.h"
-#include <iostream>
+#include "../Include/CLogger.h"
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <algorithm>
-using namespace std;
 
 #include "../Include/C3DModel_Obj.h"
 
 /**/
 C3DModel_Obj::C3DModel_Obj() : C3DModel()
 {
-	cout << "Constructor: C3DModel_Obj()" << endl;
+	Log << "Constructor: C3DModel_Obj()" << endl;
 }
 
 /**/
 C3DModel_Obj::~C3DModel_Obj()
 {
-	cout << "Destructor: C3DModel_Obj()" << endl;
+	Log << "Destructor: C3DModel_Obj()" << endl;
 	reset();
 }
 
@@ -164,55 +163,55 @@ void C3DModel_Obj::reset()
 {
 	if (m_vertexIndices != NULL)
 	{
-		cout << "deleting vertex indices" << endl;
+		Log << "deleting vertex indices" << endl;
 		delete[] m_vertexIndices;
 		m_vertexIndices = NULL;
 	}
 	if (m_normalIndices != NULL)
 	{
-		cout << "deleting normal indices" << endl;
+		Log << "deleting normal indices" << endl;
 		delete[] m_normalIndices;
 		m_normalIndices = NULL;
 	}
 	if (m_UVindices != NULL)
 	{
-		cout << "deleting UV indices" << endl;
+		Log << "deleting UV indices" << endl;
 		delete[] m_UVindices;
 		m_UVindices = NULL;
 	}
 	if (m_vertices != NULL)
 	{
-		cout << "deleting vertices" << endl;
+		Log << "deleting vertices" << endl;
 		delete[] m_vertices;
 		m_vertices = NULL;
 	}
 	if (m_verticesRaw != NULL)
 	{
-		cout << "deleting vertices (float)" << endl;
+		Log << "deleting vertices (float)" << endl;
 		delete[] m_verticesRaw;
 		m_verticesRaw = NULL;
 	}
 	if (m_normals != NULL)
 	{
-		cout << "deleting normals" << endl;
+		Log << "deleting normals" << endl;
 		delete[] m_normals;
 		m_normals = NULL;
 	}
 	if (m_normalsRaw != NULL)
 	{
-		cout << "deleting normals (float)" << endl;
+		Log << "deleting normals (float)" << endl;
 		delete[] m_normalsRaw;
 		m_normalsRaw = NULL;
 	}
 	if (m_UVCoords != NULL)
 	{
-		cout << "deleting UV coords" << endl;
+		Log << "deleting UV coords" << endl;
 		delete[] m_UVCoords;
 		m_UVCoords = NULL;
 	}
 	if (m_uvCoordsRaw != NULL)
 	{
-		cout << "deleting uvCoords (float)" << endl;
+		Log << "deleting uvCoords (float)" << endl;
 		delete[] m_uvCoordsRaw;
 		m_uvCoordsRaw = NULL;
 	}
