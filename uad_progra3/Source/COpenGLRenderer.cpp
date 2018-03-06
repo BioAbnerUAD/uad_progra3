@@ -4,6 +4,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <iostream>
+using namespace std;
+
 #include "../Include/Globals.h"
 #include "../Include/COpenGLRenderer.h"
 #include "../Include/LoadShaders.h"
@@ -12,7 +15,7 @@
 
 /*
 */
-COpenGLRenderer::COpenGLRenderer():
+COpenGLRenderer::COpenGLRenderer() :
 	m_OpenGLError{ false },
 	m_cameraDistance{ MIN_CAMERA_DISTANCE }
 {
@@ -94,7 +97,7 @@ bool COpenGLRenderer::deleteShaderProgram(unsigned int *shaderProgramId)
 
 /*
 */
-bool COpenGLRenderer::useShaderProgram(unsigned int *shaderProgramId) const
+bool COpenGLRenderer::useShaderProgram(const unsigned int * const shaderProgramId) const
 {
 	if (shaderProgramId != NULL && *shaderProgramId > 0)
 	{
@@ -129,7 +132,7 @@ bool COpenGLRenderer::createTextureObject(unsigned int *textureObjectId, unsigne
 		glGenerateMipmap(GL_TEXTURE_2D);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		
+
 		// Check for OpenGL errors
 		m_OpenGLError = checkOpenGLError("COpenGLRenderer::createTextureObject");
 
@@ -178,7 +181,7 @@ void COpenGLRenderer::deleteBufferObject(GLuint *id)
 }
 
 /*
- * Enables the given vertex shader attribute in the CURRENTLY BOUND buffer
+* Enables the given vertex shader attribute in the CURRENTLY BOUND buffer
 */
 void COpenGLRenderer::setCurrentVertexAttribPointer(int vertexShaderAttribPos, int numComponents, int type) const
 {
@@ -238,7 +241,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 
 	if (vertexArrayObjectID != NULL
 		&& *shaderProgramId > 0
-		&& vertices != NULL 
+		&& vertices != NULL
 		&& normals != NULL
 		&& UVcoords != NULL
 		&& indicesVertices != NULL
@@ -258,7 +261,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 		// Attributes change per-vertex
 		GLint vertexPosAttribLocation = glGetAttribLocation(*shaderProgramId, "attPosition");
 		GLint normalPosAttribLocation = glGetAttribLocation(*shaderProgramId, "attNormal");
-		GLint uvPosAttribLocation     = glGetAttribLocation(*shaderProgramId, "attUV");
+		GLint uvPosAttribLocation = glGetAttribLocation(*shaderProgramId, "attUV");
 
 		// Check attribute locations are valid
 		if (vertexPosAttribLocation < 0
@@ -275,8 +278,8 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 
 		// Uniforms change per-object
 		sh_ModelUniformLocation = glGetUniformLocation(*shaderProgramId, "uModelMatrix");
-		sh_ViewUniformLocation  = glGetUniformLocation(*shaderProgramId, "uViewMatrix");
-		sh_ProjUniformLocation  = glGetUniformLocation(*shaderProgramId, "uProjMatrix");
+		sh_ViewUniformLocation = glGetUniformLocation(*shaderProgramId, "uViewMatrix");
+		sh_ProjUniformLocation = glGetUniformLocation(*shaderProgramId, "uProjMatrix");
 		sh_colorUniformLocation = glGetUniformLocation(*shaderProgramId, "uColor");
 
 		if (sh_ModelUniformLocation < 0
@@ -298,7 +301,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 		int finalNumTriangles = 0;
 		int numFaces = numIndicesVert;
 		int finalNumVertices = numFaces * 3 * 3; // Number of faces * 3 vertex indices * 3 components (x,y,z)
-		int finalNumNormals  = numFaces * 3 * 3; // Number of faces * 3 normal indices * 3 components (x,y,z)
+		int finalNumNormals = numFaces * 3 * 3; // Number of faces * 3 normal indices * 3 components (x,y,z)
 		int finalNumUVCoords = numFaces * 3 * 2; // Number of faces * 3 UV indices * 2 components (x, y)
 
 		GLfloat *finalVertices = new GLfloat[finalNumVertices];
@@ -361,7 +364,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 		// Link the vertex position buffer with the shader
 		glVertexAttribPointer(normalPosAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
 		glEnableVertexAttribArray(normalPosAttribLocation);
-		
+
 		// Generate a buffer for the UV coords and set its data
 		glGenBuffers(1, &uvCoordsPositionBuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, uvCoordsPositionBuffer);
@@ -372,7 +375,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 		glEnableVertexAttribArray(uvPosAttribLocation);
 
 		// Generate a buffer for the triangle indices and set its data
-		
+
 		//*** glGenBuffers(1, &indicesVertexBuffer);
 		//*** glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesVertexBuffer);
 		//*** glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * numIndicesVert * 3, indicesVertices, GL_STATIC_DRAW);
@@ -417,12 +420,99 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 
 /*
 */
+bool COpenGLRenderer::allocateGraphicsMemoryForObject(
+	const unsigned int * const shaderProgramId,
+	unsigned int *vertexArrayObjectID,
+	GLfloat *vertices, int numVertices,
+	unsigned short *indicesVertices, int numIndicesVert)
+{
+	GLuint vertexPositionBuffer = 0;
+	GLuint indicesVertexBuffer = 0;
+
+	if (shaderProgramId == nullptr
+		|| vertexArrayObjectID == nullptr
+		|| vertices == nullptr
+		|| indicesVertices == nullptr
+		|| *shaderProgramId <= 0
+		|| !useShaderProgram(shaderProgramId))
+	{
+		return false;
+	}
+
+	*vertexArrayObjectID = 0;
+
+	// Attributes change per-vertex
+	GLint vertexPosAttribLocation = glGetAttribLocation(*shaderProgramId, "attPosition");
+
+	// Check attribute locations are valid
+	if (vertexPosAttribLocation < 0)
+	{
+		Log << "Unable to get shader program attribute locations" << endl;
+		Log << "vertexPosAttribLocation: " << vertexPosAttribLocation << endl;
+		glUseProgram(0);
+		return false;
+	}
+
+	// Uniforms change per-object
+	sh_ModelUniformLocation = glGetUniformLocation(*shaderProgramId, "uModelMatrix");
+	sh_ViewUniformLocation = glGetUniformLocation(*shaderProgramId, "uViewMatrix");
+	sh_ProjUniformLocation = glGetUniformLocation(*shaderProgramId, "uProjMatrix");
+	sh_colorUniformLocation = glGetUniformLocation(*shaderProgramId, "uColor");
+
+	if (sh_ModelUniformLocation < 0
+		|| sh_ViewUniformLocation < 0
+		|| sh_ProjUniformLocation < 0
+		|| sh_colorUniformLocation < 0)
+	{
+		Log << "Unable to get shader program uniform locations" << endl;
+		Log << "sh_ModelUniformLocation: " << sh_ModelUniformLocation << endl;
+		Log << "sh_ViewUniformLocation: " << sh_ViewUniformLocation << endl;
+		Log << "sh_ProjUniformLocation: " << sh_ProjUniformLocation << endl;
+		Log << "sh_colorUniformLocation: " << sh_colorUniformLocation << endl;
+		glUseProgram(0);
+		return false;
+	}
+
+	// Create and bind a vertex array object
+	*vertexArrayObjectID = (unsigned int)generateVertexArrayObjectID();
+
+	// Generate a buffer for the vertices and set its data
+	glGenBuffers(1, &vertexPositionBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexPositionBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * numVertices * 3, vertices, GL_STATIC_DRAW);
+	// Link the vertex position buffer with the shader
+	glVertexAttribPointer(vertexPosAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+	glEnableVertexAttribArray(vertexPosAttribLocation);
+
+	// Generate a buffer for the triangle indices and set its data
+
+	glGenBuffers(1, &indicesVertexBuffer);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesVertexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * numIndicesVert * 3, indicesVertices, GL_STATIC_DRAW);
+
+	// Unbind vertex array
+	glBindVertexArray(0);
+
+	// Unbind buffers
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	// Delete buffers
+	deleteBufferObject(&vertexPositionBuffer);
+	deleteBufferObject(&indicesVertexBuffer);
+
+	glUseProgram(0);
+
+	return true;
+}
+
+/*
+*/
 bool COpenGLRenderer::generateRenderGeometry(
 	GLfloat *vertices, int numVertices,
 	GLfloat *normals, int numNormals,
 	GLfloat *UVcoords, int numUVCoords,
 	int numFaces,
-	unsigned short *indicesVertices, 
+	unsigned short *indicesVertices,
 	unsigned short *indicesNormals,
 	unsigned short *indicesUVCoords,
 	GLfloat *finalVertices,
@@ -457,25 +547,25 @@ bool COpenGLRenderer::generateRenderGeometry(
 	*numTriangles = numFaces;
 
 	// Iterate over each face
-	for (int i = 0; i < (numFaces * 3); i+=3)
+	for (int i = 0; i < (numFaces * 3); i += 3)
 	{
 		// Each face has 3 vertex indices
 		// Each vertex has 3 components: x, y, z
 
 		// Vertex indices for this face
 		vIndices[0] = indicesVertices[i];   // Vertex index 1 
-		vIndices[1] = indicesVertices[i+1]; // Vertex index 2
-		vIndices[2] = indicesVertices[i+2]; // Vertex index 3
+		vIndices[1] = indicesVertices[i + 1]; // Vertex index 2
+		vIndices[2] = indicesVertices[i + 2]; // Vertex index 3
 
-		// Normal indices for this face
+											  // Normal indices for this face
 		nIndices[0] = indicesNormals[i];    // Normal index 1
-		nIndices[1] = indicesNormals[i+1];  // Normal index 2
-		nIndices[2] = indicesNormals[i+2];  // Normal index 3
+		nIndices[1] = indicesNormals[i + 1];  // Normal index 2
+		nIndices[2] = indicesNormals[i + 2];  // Normal index 3
 
-		// UVCoord indices for this face
+											  // UVCoord indices for this face
 		uIndices[0] = indicesUVCoords[i];   // UV coord index 1
-		uIndices[1] = indicesUVCoords[i+1]; // UV coord index 2
- 		uIndices[2] = indicesUVCoords[i+2]; // UV coord index 3
+		uIndices[1] = indicesUVCoords[i + 1]; // UV coord index 2
+		uIndices[2] = indicesUVCoords[i + 2]; // UV coord index 3
 
 		if (((vIndices[0] * 3) + 2) >= (numVertices * 3)
 			|| ((vIndices[1] * 3) + 2) >= (numVertices * 3)
@@ -545,16 +635,71 @@ bool COpenGLRenderer::generateRenderGeometry(
 
 /*
 */
-bool COpenGLRenderer::renderObject(
-	unsigned int *shaderProgramId, 
-	unsigned int *vertexArrayObjectId, 
-	int numFaces, 
+GLenum COpenGLRenderer::primitiveModeToGLEnum(EPRIMITIVE_MODE mode) const
+{
+	GLenum result = GL_TRIANGLES;
+
+	switch (mode)
+	{
+	case POINTS:
+		result = GL_POINTS;
+		break;
+	case LINES:
+		result = GL_LINES;
+		break;
+	case LINE_STRIP:
+		result = GL_LINE_STRIP;
+		break;
+	case LINE_LOOP:
+		result = GL_LINE_LOOP;
+		break;
+	case TRIANGLES:
+		result = GL_TRIANGLES;
+		break;
+	case TRIANGLE_STRIP:
+		result = GL_TRIANGLE_STRIP;
+		break;
+	case TRIANGLE_FAN:
+		result = GL_TRIANGLE_FAN;
+		break;
+	}
+
+	return result;
+}
+
+/*
+*/
+bool COpenGLRenderer::renderWireframeObject(
+	unsigned int *shaderProgramId,
+	unsigned int *vertexArrayObjectId,
+	int numFaces,
 	GLfloat *objectColor,
 	MathHelper::Matrix4 *objectTransformation)
 {
+	return renderObject(
+		shaderProgramId,
+		vertexArrayObjectId,
+		numFaces,
+		objectColor,
+		objectTransformation,
+		LINES,
+		true);
+}
+
+/*
+*/
+bool COpenGLRenderer::renderObject(
+	unsigned int *shaderProgramId,
+	unsigned int *vertexArrayObjectId,
+	int numFaces,
+	GLfloat *objectColor,
+	MathHelper::Matrix4 *objectTransformation,
+	EPRIMITIVE_MODE mode,
+	bool drawIndexedPrimitives)
+{
 	if (m_windowWidth > 0
 		&& m_windowHeight > 0
-		&& vertexArrayObjectId != NULL 
+		&& vertexArrayObjectId != NULL
 		&& *vertexArrayObjectId > 0
 		&& numFaces > 0
 		&& objectColor != NULL
@@ -567,14 +712,16 @@ bool COpenGLRenderer::renderObject(
 			return false;
 		}
 
+		GLenum drawingPrimitiveMode = primitiveModeToGLEnum(mode);
+
 		// Bind vertex array object for this 3D object
 		glBindVertexArray((GLuint)*vertexArrayObjectId);
 
 		// ============================================================================================================
 		// We're using these same vars for the test object and the actual object, we need to update them in each render pass
 		sh_ModelUniformLocation = glGetUniformLocation(*shaderProgramId, "uModelMatrix");
-		sh_ViewUniformLocation  = glGetUniformLocation(*shaderProgramId, "uViewMatrix");
-		sh_ProjUniformLocation  = glGetUniformLocation(*shaderProgramId, "uProjMatrix");
+		sh_ViewUniformLocation = glGetUniformLocation(*shaderProgramId, "uViewMatrix");
+		sh_ProjUniformLocation = glGetUniformLocation(*shaderProgramId, "uProjMatrix");
 		sh_colorUniformLocation = glGetUniformLocation(*shaderProgramId, "uColor");
 
 		// ====== Update Model View Projection matrices and pass them to the shader====================================
@@ -609,30 +756,36 @@ bool COpenGLRenderer::renderObject(
 			glUniform3f(sh_colorUniformLocation, objectColor[0], objectColor[1], objectColor[2]);
 		}
 
-		// Commented out ***, not using indices, we have flattened arrays
-		// Draw 
-		/* *** glDrawElements(
-			GL_TRIANGLES,      // Triangles
-			numFaces * 3,      // Number of indices
-			GL_UNSIGNED_SHORT, // Data type
-			0);*/
+		if (drawIndexedPrimitives)
+		{
+			glDrawElements(
+				drawingPrimitiveMode,
+				numFaces * 3,			// Number of indices
+				GL_UNSIGNED_SHORT,		// Data type
+				0);
 
-		// Draw
-		glDrawArrays(
-			GL_TRIANGLES,
-			0,
-			numFaces * 3 // 3 indices per face
-		);
+			// Check for OpenGL errors
+			m_OpenGLError = checkOpenGLError("glDrawElements()");
+		}
+		else
+		{
+			// Draw
+			glDrawArrays(
+				drawingPrimitiveMode,
+				0,
+				numFaces * 3 // 3 indices per face
+			);
 
-		// Check for OpenGL errors
-		m_OpenGLError = checkOpenGLError("glDrawElements(GL_TRIANGLES)");
+			// Check for OpenGL errors
+			m_OpenGLError = checkOpenGLError("glDrawArrays()");
+		}
 
 		// Unbind vertex array object
 		glBindVertexArray(0);
 
 		// Unbind shader program
 		glUseProgram(0);
-		
+
 		if (!m_OpenGLError)
 			return true;
 	}
@@ -645,8 +798,8 @@ bool COpenGLRenderer::renderObject(
 bool COpenGLRenderer::renderMenuItem(
 	unsigned int *shaderProgramId,
 	unsigned int *textureObjectId,
-	unsigned int *vertexArrayObjectId, 
-	int *colorUniformLocation, 
+	unsigned int *vertexArrayObjectId,
+	int *colorUniformLocation,
 	int *textureUniformLocation,
 	GLfloat *menuItemColor
 )
@@ -720,7 +873,7 @@ void COpenGLRenderer::initializeTestObjects()
 	std::string resourceFilenameFS;
 
 	// If resource files cannot be found, return
-	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_TEST_OBJECT,   wresourceFilenameVS, resourceFilenameVS) ||
+	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_TEST_OBJECT, wresourceFilenameVS, resourceFilenameVS) ||
 		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_TEST_OBJECT, wresourceFilenameFS, resourceFilenameFS))
 	{
 		Log << "ERROR: Unable to find one or more resources: " << endl;
@@ -827,7 +980,7 @@ void COpenGLRenderer::initializeTestObjects()
 /*
 */
 bool COpenGLRenderer::allocateGraphicsMemoryForMenuItem(
-	float topX, 
+	float topX,
 	float topY,
 	float menuItemHeight,
 	float *uvCoords,
@@ -838,7 +991,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForMenuItem(
 {
 	// Use shader program
 	if (shaderProgramId != NULL
-		&& vertexArrayObjectID != NULL 
+		&& vertexArrayObjectID != NULL
 		&& colorUniformLocation != NULL
 		&& useShaderProgram(shaderProgramId))
 	{
@@ -870,8 +1023,8 @@ bool COpenGLRenderer::allocateGraphicsMemoryForMenuItem(
 		{
 			-1.0f + topX,  topY - menuItemHeight,  0.0f,  // 0: -x, -y
 			-1.0f + topX,  topY,                   0.0f,  // 1: -x, +y
-			 1.0f - topX,  topY - menuItemHeight,  0.0f,  // 2: +x, -y
-			 1.0f - topX,  topY,                   0.0f   // 3: +x, +y
+			1.0f - topX,  topY - menuItemHeight,  0.0f,  // 2: +x, -y
+			1.0f - topX,  topY,                   0.0f   // 3: +x, +y
 		};
 
 		// Generate a buffer for the vertices and set its data
@@ -943,8 +1096,8 @@ bool COpenGLRenderer::allocateGraphicsMemoryForMenuItem(
 */
 void COpenGLRenderer::renderTestObject(MathHelper::Matrix4 *objectTransformation)
 {
-	if (m_windowWidth > 0 
-		&& m_windowHeight > 0 
+	if (m_windowWidth > 0
+		&& m_windowHeight > 0
 		&& !m_OpenGLError)
 	{
 		if (!useShaderProgram(&mTestshaderProgramID))
@@ -961,8 +1114,8 @@ void COpenGLRenderer::renderTestObject(MathHelper::Matrix4 *objectTransformation
 		// ====== Update Model View Projection matrices and pass them to the shader====================================
 		// This needs to be done per-frame because the values change over time
 		sh_ModelUniformLocation = glGetUniformLocation(mTestshaderProgramID, "uModelMatrix");
-		sh_ViewUniformLocation  = glGetUniformLocation(mTestshaderProgramID, "uViewMatrix");
-		sh_ProjUniformLocation  = glGetUniformLocation(mTestshaderProgramID, "uProjMatrix");
+		sh_ViewUniformLocation = glGetUniformLocation(mTestshaderProgramID, "uViewMatrix");
+		sh_ProjUniformLocation = glGetUniformLocation(mTestshaderProgramID, "uProjMatrix");
 
 		if (objectTransformation == NULL)
 		{
@@ -981,7 +1134,7 @@ void COpenGLRenderer::renderTestObject(MathHelper::Matrix4 *objectTransformation
 		glUniformMatrix4fv(sh_ProjUniformLocation, 1, GL_FALSE, &(projectionMatrix.m[0][0]));
 
 		// ====== DRAW ================================================================================================
-		
+
 		// Draw 
 		glDrawElements(
 			GL_TRIANGLES,      // Triangles
@@ -992,7 +1145,7 @@ void COpenGLRenderer::renderTestObject(MathHelper::Matrix4 *objectTransformation
 		// Check for OpenGL errors
 		m_OpenGLError = checkOpenGLError("glDrawElements(GL_TRIANGLES)");
 		if (m_OpenGLError)
-			return;		
+			return;
 
 		// Unbind vertex array
 		glBindVertexArray(0);
@@ -1011,7 +1164,7 @@ bool COpenGLRenderer::checkOpenGLError(char *operationAttempted)
 	// check OpenGL error
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR) {
-		cerr << "OpenGL error on " <<  operationAttempted << ": " << err << endl;
+		cerr << "OpenGL error on " << operationAttempted << ": " << err << endl;
 		errorDetected = true;
 	}
 
@@ -1036,19 +1189,12 @@ void COpenGLRenderer::moveCamera(float direction)
 
 /*
 */
-void COpenGLRenderer::deleteTexture(unsigned int *id) 
+void COpenGLRenderer::deleteTexture(unsigned int *id)
 {
-	if (id != NULL && *id > 0) 
-	{ 
+	if (id != NULL && *id > 0)
+	{
 		glDeleteTextures(1, id);
-	} 
-}
-
-/*
-*/
-void COpenGLRenderer::drawGrid()
-{
-	// TO-DO
+	}
 }
 
 /*
