@@ -165,6 +165,10 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CChunk.h" />
+    <ClInclude Include="CWorld.h" />
+    <ClInclude Include="CWorldIdObject.h" />
+    <ClInclude Include="CWorldObjectInstance.h" />
     <ClInclude Include="Include\C3DModel.h" />
     <ClInclude Include="Include\C3DModel_3DS.h" />
     <ClInclude Include="Include\C3DModel_Obj.h" />
@@ -172,6 +176,7 @@
     <ClInclude Include="Include\CAppParcial2.h" />
     <ClInclude Include="Include\CBinaryTree.h" />
     <ClInclude Include="Include\CBinaryTreeNode.h" />
+    <ClInclude Include="Include\CCamera.h" />
     <ClInclude Include="Include\CCircularDoubleLinkedList.h" />
     <ClInclude Include="Include\CCircularDoubleLinkedListNode.h" />
     <ClInclude Include="Include\CColor.h" />
@@ -182,6 +187,7 @@
     <ClInclude Include="Include\CGameWindow.h" />
     <ClInclude Include="Include\CLogger.h" />
     <ClInclude Include="Include\COpenGLRenderer.h" />
+    <ClInclude Include="Include\CProyectoFinal.h" />
     <ClInclude Include="Include\CVector3.h" />
     <ClInclude Include="Include\CWideStringHelper.h" />
     <ClInclude Include="Include\Globals.h" />
@@ -193,6 +199,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CChunk.cpp" />
+    <ClCompile Include="CWorld.cpp" />
+    <ClCompile Include="CWorldIdObject.cpp" />
+    <ClCompile Include="CWorldObjectInstance.cpp" />
     <ClCompile Include="Dependencies\GLAD\glad-4.3-core\src\glad.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -204,6 +214,7 @@
     <ClCompile Include="Source\C3DModel_Obj.cpp" />
     <ClCompile Include="Source\CApp.cpp" />
     <ClCompile Include="Source\CAppParcial2.cpp" />
+    <ClCompile Include="Source\CCamera.cpp" />
     <ClCompile Include="Source\CCircularDoubleLinkedList.cpp" />
     <ClCompile Include="Source\CCircularDoubleLinkedListNode.cpp" />
     <ClCompile Include="Source\CConsoleLogger.cpp" />
@@ -213,6 +224,7 @@
     <ClCompile Include="Source\CGameWindow.cpp" />
     <ClCompile Include="Source\CLogger.cpp" />
     <ClCompile Include="Source\COpenGLRenderer.cpp" />
+    <ClCompile Include="Source\CProyectoFinal.cpp" />
     <ClCompile Include="Source\CVector3.cpp" />
     <ClCompile Include="Source\LoadShaders.cpp" />
     <ClCompile Include="Source\LoadTGA.cpp" />

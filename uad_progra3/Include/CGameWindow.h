@@ -51,10 +51,16 @@ private:
 	static bool requestArrowLeft;          // Arrow left
 	static bool requestArrowRight;         // Arrow right
 
+	static bool requestMouseMove;
+
 	static int  keyMods;                   // Key modifiers, they match the GLFW key modifiers (alt, ctrl, shift)
 
 	static int  newWidth;
 	static int  newHeight;
+
+	static CVector3 cursorMovement;
+	static CVector3 lastCursorPos;
+	static bool isCursorInitialized;
 
 	// Initialize GLFW library
 	void initializeGLFW();
@@ -64,6 +70,7 @@ private:
 	static void resizeCallback(GLFWwindow * window, int width, int height);
 	// This callback will be called by GLFW when a physical key is pressed in the keyboard
 	static void keyboardCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
+	static void cursorPosCallback(GLFWwindow * window, double xpos, double ypos);
 
 	// Process user input (keyboard, mouse)
 	void processInput(void *appPointer);

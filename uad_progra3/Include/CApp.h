@@ -6,6 +6,7 @@
 #include "CGameWindow.h"
 #include "CGameMenu.h"
 #include "COpenGLRenderer.h"
+#include "CCamera.h"
 
 #define KEY_MOD_SHIFT     0x0001
 #define KEY_MOD_CONTROL   0x0002
@@ -22,6 +23,7 @@ private:
 	CGameWindow     *m_Window;         // Pointer to our CGameWindow object
 	CGameMenu       *m_Menu;           // Pointer to our CMenu object
 	COpenGLRenderer *m_OpenGLRenderer; // Pointer to our OpenGL renderer object
+	CCamera			*m_Camera;
 	bool m_Paused;                     // Is the app paused?  (i,e: window minimized)
 
 	bool isWindowInitialized() const;  // Is the CGameWindow object initialized ?
@@ -30,6 +32,7 @@ protected:
 	CGameWindow     * const getGameWindow()     const { return m_Window; }
 	CGameMenu       * const getMenu()           const { return m_Menu; }
 	COpenGLRenderer * const getOpenGLRenderer() const { return m_OpenGLRenderer; }
+	CCamera			* const getCamera();
 
 public:
 	// Constructors and VIRTUAL destructor
@@ -63,6 +66,8 @@ public:
 	virtual void onArrowDown(int mods) {}
 	virtual void onArrowLeft(int mods) {}
 	virtual void onArrowRight(int mods) {}
+
+	virtual void onMouseMove(float deltaX, float deltaY) {}
 
 	// Methods to run/render the app and initialize the menu
 	// *Note: They are PURE VIRTUAL METHODS, so we cannot create an object of this base class (compiler won't allow it),

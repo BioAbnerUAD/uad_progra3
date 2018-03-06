@@ -28,10 +28,15 @@ bool CGameWindow::requestArrowUp            = false;
 bool CGameWindow::requestArrowDown          = false;
 bool CGameWindow::requestArrowLeft          = false;
 bool CGameWindow::requestArrowRight         = false;
+bool CGameWindow::requestMouseMove			= false;
 int  CGameWindow::keyMods                   = 0;
 
 int  CGameWindow::newWidth                  = 0;
 int  CGameWindow::newHeight                 = 0;
+
+CVector3 CGameWindow::cursorMovement		= { 0, 0, 0 };
+CVector3 CGameWindow::lastCursorPos			= { 0, 0, 0 };
+bool CGameWindow::isCursorInitialized		= false;
 
 /* Default constructor
 */
@@ -103,8 +108,8 @@ bool CGameWindow::create(const char *windowTitle)
 
 	m_WindowTitle.append(windowTitle);
 
-	/* Create a window */
-	m_Window = glfwCreateWindow(m_Width, m_Height, windowTitle, NULL, NULL);
+	/* Create a window. Uncomment GetPrimerayMonitor to make full screen */
+	m_Window = glfwCreateWindow(m_Width, m_Height, windowTitle, NULL/*glfwGetPrimaryMonitor()*/, NULL);
 
 	/* If the window cannot be created, return */
 	if (!m_Window)
@@ -136,6 +141,61 @@ bool CGameWindow::create(const char *windowTitle)
 
 	/* Keyboard callback */
 	glfwSetKeyCallback(m_Window, keyboardCallback);
+
+	/*
+	* http://www.glfw.org/docs/latest/input_guide.html#cursor_pos
+	* "If you wish to implement mouse motion based camera controls or other input schemes that require unlimited mouse movement,
+	*  set the cursor mode to GLFW_CURSOR_DISABLED."
+	*  This will hide the cursor and lock it to the specified window. GLFW will then take care of all the details of cursor re-centering and
+	*  offset calculation and providing the application with a virtual cursor position. This virtual position is provided normally via both
+	*  the cursor position callback and through polling.
+	*/
+	glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// Get the desktop resolution.
+	const GLFWvidmode *videoMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	int windowPosXOffset = 15;
+
+	// Set position of the GLFW window
+	if (videoMode)
+	{
+		glfwSetWindowPos(
+			m_Window,
+			//(videoMode->width - m_Width) / 2,
+			windowPosXOffset,
+			(videoMode->height - m_Height) / 2
+		);
+
+		// Get the handle to the console window
+		HWND consoleWindow = GetConsoleWindow();
+
+		// Set the position of the console window
+		if (consoleWindow)
+		{
+			RECT r;
+			int extraHeight = 60;
+
+			// Get console window current dimensions
+			GetWindowRect(consoleWindow, &r);
+
+			// Set console window dimensions/position
+			MoveWindow(consoleWindow,
+				windowPosXOffset + m_Width + windowPosXOffset,
+				((videoMode->height - (m_Height + extraHeight)) / 2),
+				r.right - r.left, m_Height + extraHeight,
+				TRUE);
+
+			// Set console window position
+			/*SetWindowPos(
+			consoleWindow, 0,
+			m_Width + 20,
+			((videoMode->height - m_Height) / 2),
+			0, 0, SWP_NOSIZE | SWP_NOZORDER); */
+		}
+	}
+
+	/* Mouse callback */
+	glfwSetCursorPosCallback(m_Window, cursorPosCallback);
 
 	return true;
 }
@@ -338,6 +398,29 @@ void CGameWindow::keyboardCallback(GLFWwindow * window, int key, int scancode, i
 
 /*
 */
+void CGameWindow::cursorPosCallback(GLFWwindow * window, double xpos, double ypos)
+{
+	CVector3 newPos(xpos, ypos, 0);
+	if (!isCursorInitialized)
+	{
+		lastCursorPos = newPos;
+		isCursorInitialized = true;
+	}
+	else if (newPos != lastCursorPos)
+	{
+		requestMouseMove = true;
+		cursorMovement = newPos - lastCursorPos;
+		lastCursorPos = newPos;
+	}
+	else
+	{
+		requestMouseMove = false;
+		cursorMovement.setValues(0, 0, 0);
+	}
+}
+
+/*
+*/
 void CGameWindow::processInput(void *appPointer)
 {
 	if (CGameWindow::newWidth > 0 && CGameWindow::newHeight > 0 && m_ReferenceRenderer != NULL)
@@ -472,6 +555,12 @@ void CGameWindow::processInput(void *appPointer)
 			if (CGameWindow::requestArrowRight)
 			{
 				((CApp *)appPointer)->onArrowRight(CGameWindow::keyMods);
+			}
+
+			if (CGameWindow::requestMouseMove)
+			{
+				((CApp *)appPointer)->onMouseMove(cursorMovement.getX(), cursorMovement.getY());
+				requestMouseMove = false;
 			}
 		}
 	}

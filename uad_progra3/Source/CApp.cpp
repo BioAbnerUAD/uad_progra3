@@ -4,6 +4,13 @@
 
 #include "../Include/CApp.h"
 
+#include <VersionHelpers.h>
+
+CCamera * const CApp::getCamera()
+{
+	return m_Camera;
+}
+
 /* */
 CApp::CApp()
 {
@@ -18,6 +25,15 @@ CApp::CApp()
 	// Create CGameMenu Object
 	// Menu will be initialized later (menu items added)
 	m_Menu = new CGameMenu();
+
+	m_Camera = new CCamera();
+
+	if (IsWindows10OrGreater()) Log << "Windows 10 detected" << endl;
+	else if (IsWindows8Point1OrGreater()) Log << "Windows 8.1 detected" << endl;
+	else if (IsWindows8OrGreater()) Log << "Windows 8 detected (Might as well kill yourself)" << endl;
+	else if (IsWindows7OrGreater()) Log << "Windows 7 detected" << endl;
+	else if (IsWindowsVistaOrGreater()) Log << "Windows Vista detected (PLEASE KILL YOURSELF)" << endl;
+	else if (IsWindowsXPOrGreater()) Log << "Windows XP detected" << endl;
 }
 
 /* */
@@ -34,6 +50,15 @@ CApp::CApp(int window_width, int window_height)
 	// Create CGameMenu Object
 	// Menu will be initialized later (menu items added)
 	m_Menu = new CGameMenu();
+
+	m_Camera = new CCamera();
+
+	if (IsWindows10OrGreater()) Log << "Windows 10 detected" << endl;
+	else if (IsWindows8Point1OrGreater()) Log << "Windows 8.1 detected" << endl;
+	else if (IsWindows8OrGreater()) Log << "Windows 8 detected (Might as well kill yourself)" << endl;
+	else if (IsWindows7OrGreater()) Log << "Windows 7 detected" << endl;
+	else if (IsWindowsVistaOrGreater()) Log << "Windows Vista detected (PLEASE KILL YOURSELF)" << endl;
+	else if (IsWindowsXPOrGreater()) Log << "Windows XP detected" << endl;
 }
 
 /* */

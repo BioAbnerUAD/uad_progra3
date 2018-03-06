@@ -71,6 +71,11 @@ CVector3 CVector3::operator-(const CVector3 & other)
 	return res;
 }
 
+bool CVector3::operator!=(const CVector3 & other)
+{
+	return m_X != other.m_X || m_Y != other.m_Y || m_Z != other.m_Z;
+}
+
 /*
 */
 CVector3::~CVector3()

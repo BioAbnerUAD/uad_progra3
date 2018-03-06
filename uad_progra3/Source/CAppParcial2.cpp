@@ -431,6 +431,22 @@ void CAppParcial2::onF3(int mods)
 	}
 }
 
+/* */
+void CAppParcial2::onMouseMove(float deltaX, float deltaY)
+{
+	if (deltaX < 100 && deltaY < 100)
+	{
+		float moveX = -deltaX * DEFAULT_CAMERA_MOVE_SPEED;
+		float moveZ = -deltaY * DEFAULT_CAMERA_MOVE_SPEED;
+
+		float currPos[3];
+		m_objectPosition.getValues(currPos);
+		currPos[0] += moveX;
+		currPos[2] += moveZ;
+		m_objectPosition.setValues(currPos);
+	}
+}
+
 void CAppParcial2::onArrowUp(int mods)
 {
 	CVector3 movement = { 0,0,-DEFAULT_MOVEMENT_SPEED };
