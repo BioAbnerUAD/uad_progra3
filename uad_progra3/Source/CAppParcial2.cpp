@@ -7,7 +7,7 @@
 
 #include "../Include/Globals.h"
 #include "../Include/CAppParcial2.h"
-#include "../Include/C3DModel.h"
+#include "C3DModel_OBJ.h"
 #include "../Include/LoadTGA.h"
 #include "../Include/CWideStringHelper.h"
 #include "../UTFConvert.h"
@@ -333,10 +333,10 @@ bool CAppParcial2::load3DModel(const wchar_t * const filename)
 	unloadCurrent3DModel();
 	
 	// Create new 3D object
-	m_p3DModel = C3DModel::load(filename);
+	m_p3DModel = C3DModel::load(UTFConvert::convert_UTF16_UTF8((wchar_t*)filename));
 
 	// Load object from file
-	bool loaded = m_p3DModel->loadFromFile(filename);
+	bool loaded = m_p3DModel->loadFromFile(UTFConvert::convert_UTF16_UTF8((wchar_t*)filename));
 
 	if (loaded)
 	{

@@ -71,29 +71,29 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)Dependencies\GLAD\glad-4.5-core\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN32\lib-vc2015;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)Dependencies\GLAD\glad-4.5-core\include;$(IncludePath);C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL</IncludePath>
+    <LibraryPath>C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL\Binaries\DLL\$(Platform)\$(Configuration);$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN32\lib-vc2015;$(LibraryPath)</LibraryPath>
     <IntDir>Binaries\Intermediate\x86\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)Binaries\Exe\x86\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\include;$(SolutionDir)Dependencies\GLAD\glad-4.5-core\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\include;$(SolutionDir)Dependencies\GLAD\glad-4.5-core\include;$(IncludePath);C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL</IncludePath>
+    <LibraryPath>C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL\Binaries\DLL\$(Platform)\$(Configuration);$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
     <IntDir>Binaries\Intermediate\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)Binaries\Exe\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)Dependencies\GLAD\glad-4.5-core\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN32\lib-vc2015;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN32\include;$(SolutionDir)Dependencies\GLAD\glad-4.5-core\include;$(IncludePath);C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL</IncludePath>
+    <LibraryPath>C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL\Binaries\DLL\$(Platform)\$(Configuration);$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN32\lib-vc2015;$(LibraryPath)</LibraryPath>
     <IntDir>Binaries\Intermediate\x86\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)Binaries\Exe\x86\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\include;$(SolutionDir)Dependencies\GLAD\glad-4.5-core\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\include;$(SolutionDir)Dependencies\GLAD\glad-4.5-core\include;$(IncludePath);C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL</IncludePath>
+    <LibraryPath>C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL\Binaries\DLL\$(Platform)\$(Configuration);$(SolutionDir)Dependencies\GLFW\glfw-3.2.1.bin.WIN64\lib-vc2015;$(LibraryPath)</LibraryPath>
     <IntDir>Binaries\Intermediate\$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)Binaries\Exe\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -104,11 +104,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;Shlwapi.lib;OBJLoaderDLL_$(Platform)$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,11 +119,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;Shlwapi.lib;OBJLoaderDLL_$(Platform)$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -134,13 +136,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;Shlwapi.lib;OBJLoaderDLL_$(Platform)$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -152,28 +155,22 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\S-55\Git\uad_progra3\OBJLoaderDLL</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;Shlwapi.lib;OBJLoaderDLL_$(Platform)$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CCell.h" />
-    <ClInclude Include="CChunk.h" />
-    <ClInclude Include="CCubeGrid.h" />
-    <ClInclude Include="CWorld.h" />
-    <ClInclude Include="CWorldIdObject.h" />
-    <ClInclude Include="CWorldObjectInstance.h" />
     <ClInclude Include="Include\C3DModel.h" />
     <ClInclude Include="Include\C3DModel_3DS.h" />
-    <ClInclude Include="Include\C3DModel_Obj.h" />
     <ClInclude Include="Include\CApp.h" />
     <ClInclude Include="Include\CAppParcial2.h" />
     <ClInclude Include="Include\CBinaryTree.h" />
@@ -189,7 +186,6 @@
     <ClInclude Include="Include\CGameWindow.h" />
     <ClInclude Include="Include\CLogger.h" />
     <ClInclude Include="Include\COpenGLRenderer.h" />
-    <ClInclude Include="Include\CProyectoFinal.h" />
     <ClInclude Include="Include\CVector3.h" />
     <ClInclude Include="Include\CWideStringHelper.h" />
     <ClInclude Include="Include\Globals.h" />
@@ -201,12 +197,6 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CCell.cpp" />
-    <ClCompile Include="CChunk.cpp" />
-    <ClCompile Include="CCubeGrid.cpp" />
-    <ClCompile Include="CWorld.cpp" />
-    <ClCompile Include="CWorldIdObject.cpp" />
-    <ClCompile Include="CWorldObjectInstance.cpp" />
     <ClCompile Include="Dependencies\GLAD\glad-4.3-core\src\glad.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -215,7 +205,6 @@
     </ClCompile>
     <ClCompile Include="Source\C3DModel.cpp" />
     <ClCompile Include="Source\C3DModel_3DS.cpp" />
-    <ClCompile Include="Source\C3DModel_Obj.cpp" />
     <ClCompile Include="Source\CApp.cpp" />
     <ClCompile Include="Source\CAppParcial2.cpp" />
     <ClCompile Include="Source\CCamera.cpp" />
@@ -228,7 +217,6 @@
     <ClCompile Include="Source\CGameWindow.cpp" />
     <ClCompile Include="Source\CLogger.cpp" />
     <ClCompile Include="Source\COpenGLRenderer.cpp" />
-    <ClCompile Include="Source\CProyectoFinal.cpp" />
     <ClCompile Include="Source\CVector3.cpp" />
     <ClCompile Include="Source\LoadShaders.cpp" />
     <ClCompile Include="Source\LoadTGA.cpp" />

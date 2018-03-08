@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "../Include/CLogger.h"
-#include "../Include/C3DModel_Obj.h"
+#include "C3DModel_Obj.h"
 #include "../Include/C3DModel_3DS.h"
 #include "../Include/C3DModel.h"
 #include "../Include/UTFConvert.h"

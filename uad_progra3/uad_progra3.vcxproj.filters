@@ -24,9 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\C3DModel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\CApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -78,12 +75,6 @@
     <ClInclude Include="Include\CWideStringHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\C3DModel_3DS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\C3DModel_Obj.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Include\UTFConvert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -99,25 +90,10 @@
     <ClInclude Include="Include\CCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\CProyectoFinal.h">
+    <ClInclude Include="Include\C3DModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CWorld.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CWorldIdObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CWorldObjectInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CChunk.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CCubeGrid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CCell.h">
+    <ClInclude Include="Include\C3DModel_3DS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -164,15 +140,6 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\C3DModel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\C3DModel_3DS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\C3DModel_Obj.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\CConsoleLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -185,25 +152,10 @@
     <ClCompile Include="Source\CCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\CProyectoFinal.cpp">
+    <ClCompile Include="Source\C3DModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CWorldIdObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CWorldObjectInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CChunk.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CCubeGrid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CCell.cpp">
+    <ClCompile Include="Source\C3DModel_3DS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
