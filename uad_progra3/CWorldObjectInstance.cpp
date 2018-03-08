@@ -2,23 +2,12 @@
 
 
 
-CWorldObjectInstance::CWorldObjectInstance()
+CWorldObjectInstance::CWorldObjectInstance(CWorldIdObject *idObj, CVector3 pos):pos(pos)
 {
+	worldObjectID = idObj->ID;
+	wo = idObj;
 }
-
-
-CWorldObjectInstance::CWorldObjectInstance(CVector3 pos, CWorldIdObject &wObject): pos(pos),wo(&wObject){}
 
 CWorldObjectInstance::~CWorldObjectInstance()
 {
-}
-
-const size_t CWorldObjectInstance::getWorldObjectID() const
-{
-	return worldObjectID;
-}
-
-void CWorldObjectInstance::setWorldObjectID(size_t ID)
-{
-	worldObjectID = ID;
 }

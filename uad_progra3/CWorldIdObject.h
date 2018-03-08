@@ -3,12 +3,10 @@
 class CWorldIdObject
 {
 public:
-	CWorldIdObject();
-	CWorldIdObject(C3DModel * model);
+	CWorldIdObject(int ID);
 	~CWorldIdObject();
-private:
-	C3DModel * m;
-	const C3DModel * getModel() const;
-	void setModel(C3DModel* m);
+	int ID;
+	CVector3 m_vertices[8];
+	float m_verticesRaw[24];
 };
 

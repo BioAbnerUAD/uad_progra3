@@ -114,6 +114,12 @@
     <ClInclude Include="CChunk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CCubeGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CCell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -192,6 +198,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CChunk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CCubeGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

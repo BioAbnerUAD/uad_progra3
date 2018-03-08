@@ -165,7 +165,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CCell.h" />
     <ClInclude Include="CChunk.h" />
+    <ClInclude Include="CCubeGrid.h" />
     <ClInclude Include="CWorld.h" />
     <ClInclude Include="CWorldIdObject.h" />
     <ClInclude Include="CWorldObjectInstance.h" />
@@ -199,7 +201,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CCell.cpp" />
     <ClCompile Include="CChunk.cpp" />
+    <ClCompile Include="CCubeGrid.cpp" />
     <ClCompile Include="CWorld.cpp" />
     <ClCompile Include="CWorldIdObject.cpp" />
     <ClCompile Include="CWorldObjectInstance.cpp" />

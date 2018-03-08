@@ -7,6 +7,7 @@
 #include "CApp.h"
 #include "C3DModel.h"
 #include "CVector3.h"
+#include "../CWorld.h"
 
 #define DEFAULT_MOVEMENT_SPEED 0.5
 #define DEFAULT_ROTATION_SPEED 90.0
@@ -17,19 +18,13 @@ class CProyectoFinal : public CApp
 {
 private:
 	// Pointer to an object of type C3DModel
-	C3DModel * m_p3DModel;
+	CWorld * m_pWorld;
 
 	// Current delta time (time of the current frame - time of the last frame)
 	double m_currentDeltaTime;
 
-	// Current object rotation, expressed in degrees
-	double m_objectRotation;
-
 	// Current object position
 	CVector3 m_objectPosition;
-
-	//  Object rotation speed (degrees per second)
-	double m_rotationSpeed;
 
 protected:
 	// Method to initialize the menu
@@ -72,8 +67,8 @@ public:
 private:
 
 	// Load/unload 3D model
-	bool load3DModel(const wchar_t * const filename);
-	void unloadCurrent3DModel();
+	bool loadWorld();
+	void unloadWorld();
 
 	// Move camera away/closer
 	void moveCamera(float direction);

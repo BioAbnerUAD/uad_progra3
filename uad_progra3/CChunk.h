@@ -1,5 +1,6 @@
 #pragma once
-#include "CWorldObjectInstance.h"
+#include "CCell.h"
+#include <vector>
 
 // Constants based in minecraft
 // https://minecraft.gamepedia.com/Chunk
@@ -12,8 +13,9 @@
 class CChunk
 {
 public:
-	CChunk();
+	CChunk(vector<CWorldIdObject*>* idObjs, int x, int y);
 	~CChunk();
-	CWorldObjectInstance blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_HEIGHT];
+	CCell blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_HEIGHT];
+	int x, y;
 };
 

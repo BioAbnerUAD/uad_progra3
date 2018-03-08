@@ -4,14 +4,10 @@
 class CWorldObjectInstance
 {
 public:
-	CWorldObjectInstance();
-	CWorldObjectInstance( CVector3 pos, CWorldIdObject &wObject);
+	CWorldObjectInstance(CWorldIdObject *idObj, CVector3 pos);
 	~CWorldObjectInstance();
-	const size_t getWorldObjectID() const;
-	void setWorldObjectID(size_t ID);
-private:
 	CVector3 pos;
 	CWorldIdObject *wo;
-	size_t worldObjectID;
+	int worldObjectID;
 };
 

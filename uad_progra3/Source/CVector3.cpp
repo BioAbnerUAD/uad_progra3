@@ -49,6 +49,15 @@ CVector3& CVector3::operator+=(const CVector3 &other)
 	return *this;
 }
 
+CVector3 & CVector3::operator+(const CVector3 & other)
+{
+	CVector3 res;
+	res.m_X = m_X + other.getX();
+	res.m_Y = m_Y + other.getY();
+	res.m_Z = m_Z + other.getZ();
+	return res;
+}
+
 CVector3 CVector3::cross(const CVector3 & other)
 {
 	CVector3 res;

@@ -2,23 +2,28 @@
 
 
 
-CWorldIdObject::CWorldIdObject()
+CWorldIdObject::CWorldIdObject(int ID)
 {
-}
+	this->ID = ID;
 
-CWorldIdObject::CWorldIdObject(C3DModel * model):m(model){}
+	m_vertices[0].setValues(0.5, 0.5, 0.5);
+	m_vertices[1].setValues(0.5, 0.5, -0.5);
+	m_vertices[2].setValues(0.5, -0.5, 0.5);
+	m_vertices[3].setValues(0.5, -0.5, -0.5);
+	m_vertices[4].setValues(-0.5, 0.5, 0.5);
+	m_vertices[5].setValues(-0.5, 0.5, -0.5);
+	m_vertices[6].setValues(-0.5, -0.5, 0.5);
+	m_vertices[7].setValues(-0.5, -0.5, -0.5);
+
+	for (size_t i = 0; i < 8; i++)
+	{
+		m_verticesRaw[i * 3] = m_vertices[0].getX();
+		m_verticesRaw[i * 3 + 1] = m_vertices[0].getY();
+		m_verticesRaw[i * 3 + 2] = m_vertices[0].getZ();
+	};
+}
 
 
 CWorldIdObject::~CWorldIdObject()
 {
-}
-
-const C3DModel * CWorldIdObject::getModel() const
-{
-	return m;
-}
-
-void CWorldIdObject::setModel(C3DModel * m)
-{
-	this->m = m;
 }

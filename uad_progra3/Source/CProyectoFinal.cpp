@@ -14,11 +14,9 @@
 
 /* */
 CProyectoFinal::CProyectoFinal() :
-	m_p3DModel(NULL),
+	m_pWorld(NULL),
 	m_currentDeltaTime{ 0.0 },
-	m_objectRotation{ 0.0 },
-	m_objectPosition{ 0.0f, 0.0f, 0.0f },
-	m_rotationSpeed{ DEFAULT_ROTATION_SPEED }
+	m_objectPosition{ 0.0f, 0.0f, 0.0f }
 {
 	Log << "Constructor: CAppParcial2()" << endl;
 }
@@ -26,11 +24,9 @@ CProyectoFinal::CProyectoFinal() :
 /* */
 CProyectoFinal::CProyectoFinal(int window_width, int window_height) :
 	CApp(window_width, window_height),
-	m_p3DModel(NULL),
+	m_pWorld(NULL),
 	m_currentDeltaTime{ 0.0 },
-	m_objectRotation{ 0.0 },
-	m_objectPosition{ 0.0f, 0.0f, 0.0f },
-	m_rotationSpeed{ DEFAULT_ROTATION_SPEED }
+	m_objectPosition{ 0.0f, 0.0f, 0.0f }
 {
 	Log << "Constructor: CAppParcial2(int window_width, int window_height)" << endl;
 }
@@ -39,7 +35,7 @@ CProyectoFinal::CProyectoFinal(int window_width, int window_height) :
 CProyectoFinal::~CProyectoFinal()
 {
 	Log << "Destructor: ~CAppParcial2()" << endl;
-	unloadCurrent3DModel();
+	unloadWorld();
 }
 
 /* */
@@ -171,7 +167,7 @@ bool CProyectoFinal::initializeMenu()
 		}
 
 		std::vector<std::string> menuOptions;
-		menuOptions.push_back("Load 3D Model");
+		menuOptions.push_back("Load World");
 		menuOptions.push_back("Options");
 		menuOptions.push_back("Exit");
 
@@ -234,8 +230,6 @@ bool CProyectoFinal::initializeMenu()
 /* */
 void CProyectoFinal::update(double deltaTime)
 {
-	double degreesToRotate = 0.0;
-
 	if (deltaTime <= 0.0f)
 	{
 		return;
@@ -243,24 +237,6 @@ void CProyectoFinal::update(double deltaTime)
 
 	// Save current delta time
 	m_currentDeltaTime = deltaTime;
-
-	// Calculate degrees to rotate
-	// ----------------------------------------------------------------------------------------------------------------------------------------
-	// degrees = rotation speed * delta time 
-	// deltaTime is expressed in milliseconds, but our rotation speed is expressed in seconds (convert delta time from milliseconds to seconds)
-	degreesToRotate = m_rotationSpeed * (deltaTime / 1000.0);
-	// accumulate rotation degrees
-	m_objectRotation += degreesToRotate;
-
-	// Reset rotation if needed
-	while (m_objectRotation > 360.0)
-	{
-		m_objectRotation -= 360.0;
-	}
-	if (m_objectRotation < 0.0)
-	{
-		m_objectRotation = 0.0;
-	}
 }
 
 /* */
@@ -280,38 +256,32 @@ void CProyectoFinal::render()
 		// White 
 		float color[3] = { 0.95f, 0.95f, 0.95f };
 
-		if (m_p3DModel != NULL && m_p3DModel->isInitialized())
+		if (m_pWorld != NULL)
 		{
 			// convert total degrees rotated to radians;
-			double totalDegreesRotatedRadians = m_objectRotation * 3.1459 / 180.0;
+			//not using this yet
+			double totalDegreesRotatedRadians = 0 * 3.1459 / 180.0;
 
 			// Get a matrix that has both the object rotation and translation
 			MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
 
 			getOpenGLRenderer()->renderObject(
-				m_p3DModel->getShaderProgramId(),
-				m_p3DModel->getGraphicsMemoryObjectId(),
-				m_p3DModel->getNumFaces(),
+				m_pWorld->getShaderProgramId(),
+				m_pWorld->getGraphicsMemoryObjectId(),
+				m_pWorld->getNumFaces(),
 				color,
 				&modelMatrix
 			);
 		}
 		else
 		{
-			// convert total degrees rotated to radians;
-			double totalDegreesRotatedRadians = m_objectRotation * 3.1459 / 180.0;
-
-			// Get a matrix that has both the object rotation and translation
-			MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
-
-			// No model loaded, show test cube
-			getOpenGLRenderer()->renderTestObject(&modelMatrix);
+			loadWorld();
 		}
 	}
 }
 
 /* */
-bool CProyectoFinal::load3DModel(const wchar_t * const filename)
+bool CProyectoFinal::loadWorld()
 {
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
@@ -330,40 +300,28 @@ bool CProyectoFinal::load3DModel(const wchar_t * const filename)
 	}
 
 	// Unload any current 3D model
-	unloadCurrent3DModel();
+	unloadWorld();
 
-	// Create new 3D object
-	m_p3DModel = C3DModel::load(filename);
-
-	// Load object from file
-	bool loaded = m_p3DModel->loadFromFile(filename);
+	// Create new World
+	m_pWorld = new CWorld();
+	bool loaded = m_pWorld->initialize();
 
 	if (loaded)
 	{
 		// Allocate graphics memory for object
 		loaded = getOpenGLRenderer()->allocateGraphicsMemoryForObject(
-			m_p3DModel->getShaderProgramId(),
-			resourceFilenameVS.c_str(),
-			resourceFilenameFS.c_str(),
-			m_p3DModel->getGraphicsMemoryObjectId(),
-			m_p3DModel->getModelVertices(),
-			m_p3DModel->getNumVertices(),
-			m_p3DModel->getModelNormals(),
-			m_p3DModel->getNumNormals(),
-			m_p3DModel->getModelUVCoords(),
-			m_p3DModel->getNumUVCoords(),
-			m_p3DModel->getModelVertexIndices(),
-			m_p3DModel->getNumFaces(),
-			m_p3DModel->getModelNormalIndices(),
-			((m_p3DModel) ? (m_p3DModel->getNumFaces()) : 0),
-			m_p3DModel->getModelUVCoordIndices(),
-			((m_p3DModel) ? (m_p3DModel->getNumFaces()) : 0)
+			m_pWorld->getShaderProgramId(),
+			m_pWorld->getGraphicsMemoryObjectId(),
+			m_pWorld->getModelVertices(),
+			m_pWorld->getNumVertices(),
+			m_pWorld->getModelVertexIndices(),
+			m_pWorld->getNumFaces()
 		);
 
 		// If error ocurred, cleanup memory
 		if (!loaded)
 		{
-			unloadCurrent3DModel();
+			unloadWorld();
 		}
 	}
 
@@ -371,19 +329,19 @@ bool CProyectoFinal::load3DModel(const wchar_t * const filename)
 }
 
 /* */
-void CProyectoFinal::unloadCurrent3DModel()
+void CProyectoFinal::unloadWorld()
 {
-	if (m_p3DModel != NULL)
+	if (m_pWorld != NULL)
 	{
 		// Free up graphics memory
 		getOpenGLRenderer()->freeGraphicsMemoryForObject(
-			m_p3DModel->getShaderProgramId(),
-			m_p3DModel->getGraphicsMemoryObjectId()
+			m_pWorld->getShaderProgramId(),
+			m_pWorld->getGraphicsMemoryObjectId()
 		);
 
 		// Delete 3D object
-		delete m_p3DModel;
-		m_p3DModel = NULL;
+		delete m_pWorld;
+		m_pWorld = nullptr;
 	}
 }
 
@@ -410,7 +368,7 @@ void CProyectoFinal::onF2(int mods)
 		WideCharToMultiByte(CP_UTF8, 0, &wideStringBuffer[0], (int)wideStringBuffer.size(), &multibyteString[0], size_needed, NULL, NULL);
 		Log << "Filename to load: " << multibyteString.c_str() << endl;
 
-		if (!load3DModel(wideStringBuffer.c_str()))
+		if (!loadWorld())
 		{
 			Log << "Unable to load 3D model" << endl;
 		}
@@ -473,6 +431,15 @@ void CProyectoFinal::onMouseMove(float dx, float dy)
 {
 	CCamera* cam = getCamera();
 	if (cam != nullptr) cam->Move(dx, dy);
+}
+
+bool CProyectoFinal::loadWorld()
+{
+	return false;
+}
+
+void CProyectoFinal::unloadWorld()
+{
 }
 
 /* */

@@ -4,70 +4,134 @@
 
 CWorld::CWorld()
 {
-	
+	isInitialized = false;
 }
-
 
 CWorld::~CWorld()
 {
-	for (size_t i = 0; i < idObject.size(); i++)
+	if (isInitialized)
 	{
-		delete idObject[i];
+		for (size_t i = 0; i < idObject.size(); i++) delete idObject[i];
+		delete cubeGrid;
 	}
 }
 
-const CWorldIdObject * CWorld::getIdObject(int ID) const
+bool CWorld::initialize()
 {
-	return idObject[ID];
+	cubeGrid = new CCubeGrid();
+	CWorldIdObject* idObj = new CWorldIdObject(0);
+	idObject.push_back(idObj);
+
+	CChunk* chunk = new CChunk(&idObject, 0, 0);
+
+	cubeGrid->addChunk(chunk);
+
+	isInitialized = true;
 }
 
-void CWorld::addIdObject(CWorldIdObject * object)
+void CWorld::render()
 {
-	idObject.push_back(object);
-}
-
-CChunk * CWorld::getChunk(int x, int y)
-{
-	string key = to_string(x) + "_" + to_string(y);
-	if (grid.find(key) == grid.end()) {
-		grid.insert(pair<string, CChunk>(key, CChunk()));
-	}
-	return &grid[key];
 }
 
 void CWorld::save()
 {
-	ofstream stream("world.bin", ios::binary);
-
-	vector<string> chunkKeys;
-	vector<CChunk> vecChunks;
-
-	auto header = FILE_HEADER;
-	int version = VERSION_NO;
-
-	stream.write(&header[0], strlen(header));
-	stream.write((char*)&version, sizeof(int));
-
-	for (auto chunk: grid) {
-		chunkKeys.push_back(chunk.first);
-		vecChunks.push_back(chunk.second);
-	}
-
-	int chunkSize = chunkKeys.size();
-
-	stream.write((char*)&chunkSize, sizeof(int));
-
-	for (auto key: chunkKeys)
+	if (isInitialized)
 	{
-		int length = key.length();
-		stream.write((char*)&length, sizeof(int));
-		stream.write(&key[0], key.length());
-	}
-	stream.write((char*)&vecChunks[0], chunkSize * sizeof(CChunk));
+		ofstream stream("world.bin", ios::binary);
 
-	stream.close();
+		auto header = FILE_HEADER;
+		size_t version = VERSION_NO;
+		size_t subversion = SUB_VERSION_NO;
+
+		stream.write(header, strlen(header));
+		stream.write((char*)&version, sizeof(size_t));
+		stream.write((char*)&subversion, sizeof(size_t));
+
+		size_t chunkSize = cubeGrid->chunksSize();
+
+		stream.write((char*)&chunkSize, sizeof(size_t));
+		auto chunks = *(cubeGrid->getChunks());
+
+		for (auto chunk : chunks)
+		{
+			stream.write((char*)&chunk.second->x, sizeof(int));
+			stream.write((char*)&chunk.second->y, sizeof(int));
+
+			for (size_t i = 0; i < CHUNK_SIZE; i++)
+			{
+				for (size_t j = 0; j < CHUNK_SIZE; j++)
+				{
+					for (size_t k = 0; k < CHUNK_HEIGHT; k++)
+					{
+						int id = chunk.second->blocks[i][j][k].instance->worldObjectID;
+						stream.write((char*)&id, sizeof(int));
+					}
+				}
+			}
+		}
+
+		stream.close();
+	}
 }
 
 void CWorld::load()
 {
+	if (!isInitialized)
+	{
+		cubeGrid = new CCubeGrid();
+		CWorldIdObject* idObj = new CWorldIdObject(0);
+		idObject.push_back(idObj);
+
+		ifstream stream("world.bin", ios::binary);
+
+		char* header = new char[strlen(FILE_HEADER)];
+		size_t version;
+		size_t subversion;
+
+		stream.read(header, strlen(FILE_HEADER));
+		if (strcmp(header, FILE_HEADER) != 0)
+		{
+			Log << "Error: Wrong World File Header" << endl;
+			return;
+		}
+		stream.read((char*)&version, sizeof(size_t));
+		stream.read((char*)&subversion, sizeof(size_t));
+		if (version > VERSION_NO || (version == VERSION_NO && subversion > SUB_VERSION_NO))
+		{
+			Log << "Error: Unsupported World File Version" << endl;
+			return;
+		}
+
+		size_t chunkSize;
+
+		stream.read((char*)&chunkSize, sizeof(size_t));
+
+		for (size_t i = 0; i < chunkSize; i++)
+		{
+			int chunkX, chunkY;
+			stream.read((char*)&chunkX, sizeof(int));
+			stream.read((char*)&chunkY, sizeof(int));
+
+			CChunk* chunk = new CChunk(&idObject, chunkX, chunkY);
+
+			for (size_t i = 0; i < CHUNK_SIZE; i++)
+			{
+				for (size_t j = 0; j < CHUNK_SIZE; j++)
+				{
+					for (size_t k = 0; k < CHUNK_HEIGHT; k++)
+					{
+						int id;
+						stream.read((char*)&id, sizeof(int));
+						chunk->blocks[i][j][k].instance->worldObjectID = id;
+					}
+				}
+			}
+
+			cubeGrid->addChunk(chunk);
+		}
+
+		isInitialized = true;
+
+		stream.close();
+	}
 }
