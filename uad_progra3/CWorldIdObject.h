@@ -8,5 +8,7 @@ public:
 	int ID;
 	CVector3 m_vertices[8];
 	float m_verticesRaw[24];
+	int m_indices[36];
+	int m_numFaces;
 };
 

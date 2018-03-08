@@ -262,16 +262,21 @@ void CProyectoFinal::render()
 			//not using this yet
 			double totalDegreesRotatedRadians = 0 * 3.1459 / 180.0;
 
-			// Get a matrix that has both the object rotation and translation
-			MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
 
-			getOpenGLRenderer()->renderObject(
-				m_pWorld->getShaderProgramId(),
-				m_pWorld->getGraphicsMemoryObjectId(),
-				m_pWorld->getNumFaces(),
-				color,
-				&modelMatrix
-			);
+			for (size_t i = 0; i < length; i++)
+			{
+				// Get a matrix that has both the object rotation and translation
+				MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
+
+				getOpenGLRenderer()->renderObject(
+					m_pWorld->getShaderProgramId(),
+					m_pWorld->getGraphicsMemoryObjectId(),
+					m_pWorld->getNumFaces(),
+					color,
+					&modelMatrix
+				);
+			}
+			
 		}
 		else
 		{
@@ -426,7 +431,6 @@ void CProyectoFinal::onArrowRight(int mods)
 	m_objectPosition += movement;
 }
 
-#include <Math.h>
 void CProyectoFinal::onMouseMove(float dx, float dy)
 {
 	CCamera* cam = getCamera();
