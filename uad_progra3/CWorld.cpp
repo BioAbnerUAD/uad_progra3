@@ -9,6 +9,11 @@ CWorld::CWorld()
 
 CWorld::~CWorld()
 {
+	// Free up graphics memory
+
+	size_t ID = 0;
+	renderer->freeGraphicsMemoryForObject( &ID, &ID);
+
 	if (isInitialized)
 	{
 		for (size_t i = 0; i < idObject.size(); i++) delete idObject[i];
@@ -16,7 +21,7 @@ CWorld::~CWorld()
 	}
 }
 
-bool CWorld::initialize()
+bool CWorld::initialize(COpenGLRenderer* renderer)
 {
 	cubeGrid = new CCubeGrid();
 	CWorldIdObject* idObj = new CWorldIdObject(0);
@@ -26,11 +31,34 @@ bool CWorld::initialize()
 
 	cubeGrid->addChunk(chunk);
 
-	isInitialized = true;
+	size_t ID = 0;
+
+	isInitialized = renderer->allocateGraphicsMemoryForObject(
+		&ID, &ID, 
+		getVertices(),
+		getNumVertices(),
+		getVertexIndices(),
+		getNumFaces()
+	);
+
+	return isInitialized;
 }
 
-void CWorld::render()
+void CWorld::render(CVector3 camPosition)
 {
+	// White 
+	float color[3] = { 0.95f, 0.95f, 0.95f };
+
+	// convert total degrees rotated to radians;
+	//not using this yet
+	double totalDegreesRotatedRadians = 0 * 3.1459 / 180.0;
+
+	CVector3 zero = {0,0,0};
+	// Get a matrix that has both the object rotation and translation
+	MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, zero);
+
+	size_t ID = 0;
+	renderer->renderObject(&ID, &ID, getNumFaces(), color, &modelMatrix);
 }
 
 void CWorld::save()
@@ -134,4 +162,24 @@ void CWorld::load()
 
 		stream.close();
 	}
+}
+
+float * CWorld::getVertices()
+{
+	return &(cubeGrid->getChunk(0,0)->trigsRaw)[0];
+}
+
+size_t CWorld::getNumVertices()
+{
+	return cubeGrid->getChunk(0, 0)->trigsRaw.size();
+}
+
+unsigned short * CWorld::getVertexIndices()
+{
+	return &(cubeGrid->getChunk(0, 0)->indicesTrigs)[0];
+}
+
+size_t CWorld::getNumFaces()
+{
+	return cubeGrid->getChunk(0, 0)->indicesTrigs.size() / 3;
 }

@@ -49,7 +49,7 @@ CVector3& CVector3::operator+=(const CVector3 &other)
 	return *this;
 }
 
-CVector3 & CVector3::operator+(const CVector3 & other)
+CVector3 CVector3::operator+(const CVector3 & other)
 {
 	CVector3 res;
 	res.m_X = m_X + other.getX();

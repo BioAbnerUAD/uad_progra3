@@ -18,7 +18,7 @@ CProyectoFinal::CProyectoFinal() :
 	m_currentDeltaTime{ 0.0 },
 	m_objectPosition{ 0.0f, 0.0f, 0.0f }
 {
-	Log << "Constructor: CAppParcial2()" << endl;
+	Log << "Constructor: CProyectoFinal()" << endl;
 }
 
 /* */
@@ -28,13 +28,13 @@ CProyectoFinal::CProyectoFinal(int window_width, int window_height) :
 	m_currentDeltaTime{ 0.0 },
 	m_objectPosition{ 0.0f, 0.0f, 0.0f }
 {
-	Log << "Constructor: CAppParcial2(int window_width, int window_height)" << endl;
+	Log << "Constructor: CProyectoFinal(int window_width, int window_height)" << endl;
 }
 
 /* */
 CProyectoFinal::~CProyectoFinal()
 {
-	Log << "Destructor: ~CAppParcial2()" << endl;
+	Log << "Destructor: ~CProyectoFinal()" << endl;
 	unloadWorld();
 }
 
@@ -71,7 +71,7 @@ void CProyectoFinal::run()
 /* */
 bool CProyectoFinal::initializeMenu()
 {
-	Log << "CAppParcial2::initializeMenu()" << endl;
+	Log << "CProyectoFinal::initializeMenu()" << endl;
 
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
@@ -253,30 +253,9 @@ void CProyectoFinal::render()
 	}
 	else // Otherwise, render active object if loaded (or test cube if no object is loaded)
 	{
-		// White 
-		float color[3] = { 0.95f, 0.95f, 0.95f };
-
 		if (m_pWorld != NULL)
 		{
-			// convert total degrees rotated to radians;
-			//not using this yet
-			double totalDegreesRotatedRadians = 0 * 3.1459 / 180.0;
-
-
-			for (size_t i = 0; i < length; i++)
-			{
-				// Get a matrix that has both the object rotation and translation
-				MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
-
-				getOpenGLRenderer()->renderObject(
-					m_pWorld->getShaderProgramId(),
-					m_pWorld->getGraphicsMemoryObjectId(),
-					m_pWorld->getNumFaces(),
-					color,
-					&modelMatrix
-				);
-			}
-			
+			m_pWorld->render(getCamera()->position);	
 		}
 		else
 		{
@@ -309,25 +288,15 @@ bool CProyectoFinal::loadWorld()
 
 	// Create new World
 	m_pWorld = new CWorld();
-	bool loaded = m_pWorld->initialize();
 
-	if (loaded)
+	// Initialize & Allocate graphics memory for object
+	bool loaded = m_pWorld->initialize(getOpenGLRenderer());
+
+	// If error ocurred, cleanup memory
+	if (!loaded)
 	{
-		// Allocate graphics memory for object
-		loaded = getOpenGLRenderer()->allocateGraphicsMemoryForObject(
-			m_pWorld->getShaderProgramId(),
-			m_pWorld->getGraphicsMemoryObjectId(),
-			m_pWorld->getModelVertices(),
-			m_pWorld->getNumVertices(),
-			m_pWorld->getModelVertexIndices(),
-			m_pWorld->getNumFaces()
-		);
-
-		// If error ocurred, cleanup memory
-		if (!loaded)
-		{
-			unloadWorld();
-		}
+		unloadWorld();
+		return false;
 	}
 
 	return loaded;
@@ -338,12 +307,6 @@ void CProyectoFinal::unloadWorld()
 {
 	if (m_pWorld != NULL)
 	{
-		// Free up graphics memory
-		getOpenGLRenderer()->freeGraphicsMemoryForObject(
-			m_pWorld->getShaderProgramId(),
-			m_pWorld->getGraphicsMemoryObjectId()
-		);
-
 		// Delete 3D object
 		delete m_pWorld;
 		m_pWorld = nullptr;
@@ -435,15 +398,6 @@ void CProyectoFinal::onMouseMove(float dx, float dy)
 {
 	CCamera* cam = getCamera();
 	if (cam != nullptr) cam->Move(dx, dy);
-}
-
-bool CProyectoFinal::loadWorld()
-{
-	return false;
-}
-
-void CProyectoFinal::unloadWorld()
-{
 }
 
 /* */

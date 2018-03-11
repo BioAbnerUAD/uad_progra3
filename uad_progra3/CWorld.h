@@ -2,6 +2,7 @@
 #include "CWorldIdObject.h"
 #include "CCubeGrid.h"
 #include "CChunk.h"
+#include "Include\COpenGLRenderer.h"
 #include <vector>
 
 #define FILE_HEADER "MAINCRA UORL FA-IL" //:V
@@ -14,12 +15,18 @@ class CWorld
 public:
 	CWorld();
 	~CWorld();
-	bool initialize();
-	void render();
+	bool initialize(COpenGLRenderer* renderer);
+	void render(CVector3 camPosition);
 	void save();
 	void load();
 	vector<CWorldIdObject*> idObject;
 	CCubeGrid* cubeGrid;
 	bool isInitialized;
+private:
+	COpenGLRenderer* renderer;
+	float* getVertices();
+	size_t getNumVertices();
+	unsigned short* getVertexIndices();
+	size_t getNumFaces();
 };
 
