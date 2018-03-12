@@ -6,14 +6,14 @@ CWorldIdObject::CWorldIdObject(int ID)
 {
 	this->ID = ID;
 
-	m_vertices[0].setValues(0.5, 0.5, 0.5);
-	m_vertices[1].setValues(0.5, 0.5, -0.5);
-	m_vertices[2].setValues(0.5, -0.5, 0.5);
-	m_vertices[3].setValues(0.5, -0.5, -0.5);
-	m_vertices[4].setValues(-0.5, 0.5, 0.5);
-	m_vertices[5].setValues(-0.5, 0.5, -0.5);
-	m_vertices[6].setValues(-0.5, -0.5, 0.5);
-	m_vertices[7].setValues(-0.5, -0.5, -0.5);
+	m_vertices[0].setValues(-0.5, -0.5, 0.5);
+	m_vertices[1].setValues(0.5, -0.5, 0.5);
+	m_vertices[2].setValues(-0.5, 0.5, 0.5);
+	m_vertices[3].setValues(0.5, 0.5, 0.5);
+	m_vertices[4].setValues(-0.5, 0.5, -0.5);
+	m_vertices[5].setValues(0.5, 0.5, -0.5);
+	m_vertices[6].setValues(-0.5, -0.5, -0.5);
+	m_vertices[7].setValues(0.5, -0.5, -0.5);
 
 	for (size_t i = 0; i < 8; i++)
 	{
@@ -26,17 +26,17 @@ CWorldIdObject::CWorldIdObject(int ID)
 
 	int indices[] = {
 		0, 1, 2,
-		1, 3, 2,
-		4, 0, 6,
-		0, 2, 6,
-		5, 1, 4,
-		1, 0, 4,
-		5, 4, 7,
-		4, 6, 7,
-		6, 2, 7,
-		2, 3, 7,
-		7, 3, 5,
-		3, 1, 5
+		2, 1, 3,
+		2, 3, 4,
+		4, 3, 5,
+		4, 5, 6,
+		6, 5, 7,
+		6, 5, 0,
+		0, 7, 1,
+		1, 7, 3,
+		3, 7, 5,
+		6, 0, 4,
+		4, 0, 2
 	};
 
 	for (size_t i = 0; i < 36; i++)

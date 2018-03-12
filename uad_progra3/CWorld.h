@@ -24,6 +24,10 @@ public:
 	bool isInitialized;
 private:
 	COpenGLRenderer* renderer;
+
+	size_t shaderProgramID = 0;
+	size_t VAOID = 0;
+
 	float* getVertices();
 	size_t getNumVertices();
 	unsigned short* getVertexIndices();

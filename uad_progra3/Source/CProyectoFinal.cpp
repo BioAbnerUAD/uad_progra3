@@ -397,7 +397,10 @@ void CProyectoFinal::onArrowRight(int mods)
 void CProyectoFinal::onMouseMove(float dx, float dy)
 {
 	CCamera* cam = getCamera();
-	if (cam != nullptr) cam->Move(dx, dy);
+	if (cam != nullptr) cam->Move(
+		-dx * DEFAULT_CAMERA_MOVE_SPEED,
+		dy * DEFAULT_CAMERA_MOVE_SPEED
+	);
 }
 
 /* */

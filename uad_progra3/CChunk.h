@@ -6,8 +6,8 @@
 // https://minecraft.gamepedia.com/Chunk
 // 64x64x256  blocks
 
-#define CHUNK_SIZE 1//64 
-#define CHUNK_HEIGHT 1//256
+#define CHUNK_SIZE 2//64 
+#define CHUNK_HEIGHT 2//256
 #define BLOCK_SIZE 1.0f
 
 class CChunk
@@ -17,7 +17,11 @@ public:
 	~CChunk();
 	CCell blocks[CHUNK_SIZE][CHUNK_SIZE][CHUNK_HEIGHT];
 	int x, y;
-	vector<unsigned short> indicesTrigs;
-	vector<float> trigsRaw;
+	unsigned short *m_vertexIndices;
+
+	CVector3 *m_vertices;
+	float *m_verticesRaw;
+
+	int m_numVertices, m_numFaces;
 };
 

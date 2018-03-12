@@ -1,5 +1,4 @@
 #include "../Include/CCamera.h"
-#include <iostream>
 
 CCamera::CCamera()
 {
@@ -11,7 +10,6 @@ CCamera::CCamera()
 
 void CCamera::Move(float dx, float dy)
 {
-	std::cout << "moved " << dx << "," << dy << std::endl;
 	position.setValues(position.getX() + dx, position.getY() + dy, position.getZ());
 }
 

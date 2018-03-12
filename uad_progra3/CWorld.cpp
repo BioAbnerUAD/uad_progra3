@@ -1,5 +1,7 @@
 #include "CWorld.h"
 #include "Include\CLogger.h"
+#include "Include\CWideStringHelper.h"
+#include "Include\Globals.h"
 #include <fstream>
 
 CWorld::CWorld()
@@ -11,8 +13,7 @@ CWorld::~CWorld()
 {
 	// Free up graphics memory
 
-	size_t ID = 0;
-	renderer->freeGraphicsMemoryForObject( &ID, &ID);
+	renderer->freeGraphicsMemoryForObject( &shaderProgramID, &VAOID);
 
 	if (isInitialized)
 	{
@@ -31,10 +32,27 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 
 	cubeGrid->addChunk(chunk);
 
-	size_t ID = 0;
+	this->renderer = renderer;
+
+	std::wstring wresourceFilenameVS;
+	std::wstring wresourceFilenameFS;
+	std::string resourceFilenameVS;
+	std::string resourceFilenameFS;
+
+	// If resource files cannot be found, return
+	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_3D_OBJECTS, wresourceFilenameVS, resourceFilenameVS) ||
+		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_3D_OBJECTS, wresourceFilenameFS, resourceFilenameFS))
+	{
+		Log << "ERROR: Unable to find one or more resources: " << endl;
+		Log << "  " << VERTEX_SHADER_3D_OBJECTS << endl;
+		Log << "  " << FRAGMENT_SHADER_3D_OBJECTS << endl;
+		return false;
+	}
+
+	renderer->createShaderProgram(&shaderProgramID, resourceFilenameVS.c_str(), resourceFilenameFS.c_str());
 
 	isInitialized = renderer->allocateGraphicsMemoryForObject(
-		&ID, &ID, 
+		&shaderProgramID, &VAOID,
 		getVertices(),
 		getNumVertices(),
 		getVertexIndices(),
@@ -53,12 +71,10 @@ void CWorld::render(CVector3 camPosition)
 	//not using this yet
 	double totalDegreesRotatedRadians = 0 * 3.1459 / 180.0;
 
-	CVector3 zero = {0,0,0};
 	// Get a matrix that has both the object rotation and translation
-	MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, zero);
+	MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, camPosition);
 
-	size_t ID = 0;
-	renderer->renderObject(&ID, &ID, getNumFaces(), color, &modelMatrix);
+	renderer->renderObject(&shaderProgramID, &VAOID, getNumFaces(), color, &modelMatrix);
 }
 
 void CWorld::save()
@@ -166,20 +182,20 @@ void CWorld::load()
 
 float * CWorld::getVertices()
 {
-	return &(cubeGrid->getChunk(0,0)->trigsRaw)[0];
+	return cubeGrid->getChunk(0,0)->m_verticesRaw;
 }
 
 size_t CWorld::getNumVertices()
 {
-	return cubeGrid->getChunk(0, 0)->trigsRaw.size();
+	return cubeGrid->getChunk(0, 0)->m_numVertices;
 }
 
 unsigned short * CWorld::getVertexIndices()
 {
-	return &(cubeGrid->getChunk(0, 0)->indicesTrigs)[0];
+	return cubeGrid->getChunk(0, 0)->m_vertexIndices;
 }
 
 size_t CWorld::getNumFaces()
 {
-	return cubeGrid->getChunk(0, 0)->indicesTrigs.size() / 3;
+	return cubeGrid->getChunk(0, 0)->m_numFaces;
 }

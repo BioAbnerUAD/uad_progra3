@@ -2,7 +2,7 @@
 
 
 
-CWorldObjectInstance::CWorldObjectInstance(CWorldIdObject *idObj, CVector3 pos):pos(pos)
+CWorldObjectInstance::CWorldObjectInstance(CWorldIdObject *idObj, CVector3& pos):pos(pos)
 {
 	worldObjectID = idObj->ID;
 	wo = idObj;

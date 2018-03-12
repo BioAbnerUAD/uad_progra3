@@ -128,13 +128,13 @@ bool C3DModel_Obj::readFile(const char * const filename)
 		memcpy(this->m_UVindices, &indicesUVs[0], indicesUVs.size() * sizeof(unsigned short));
 
 		this->m_vertices = new CVector3[vertices.size()];
-		memcpy(this->m_vertices, &vertices[0], vertices.size() * sizeof(float));
+		memcpy(this->m_vertices, &vertices[0], vertices.size() * sizeof(CVector3));
 
 		this->m_normals = new CVector3[normals.size()];
-		memcpy(this->m_normals, &normals[0], normals.size() * sizeof(float));
+		memcpy(this->m_normals, &normals[0], normals.size() * sizeof(CVector3));
 
 		this->m_UVCoords = new CVector3[UVcoords.size()];
-		memcpy(this->m_UVCoords, &UVcoords[0], UVcoords.size() * sizeof(float));
+		memcpy(this->m_UVCoords, &UVcoords[0], UVcoords.size() * sizeof(CVector3));
 
 		this->m_verticesRaw = new float[verticesR.size()];
 		memcpy(this->m_verticesRaw, &verticesR[0], verticesR.size() * sizeof(float));
