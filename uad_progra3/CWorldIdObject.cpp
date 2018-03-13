@@ -1,7 +1,6 @@
 #include "CWorldIdObject.h"
 
 
-
 CWorldIdObject::CWorldIdObject(int ID)
 {
 	this->ID = ID;
@@ -24,7 +23,7 @@ CWorldIdObject::CWorldIdObject(int ID)
 
 	m_numFaces = 12;
 
-	int indices[] = {
+	unsigned short indices[] = {
 		0, 1, 2,
 		2, 1, 3,
 		2, 3, 4,
@@ -39,10 +38,7 @@ CWorldIdObject::CWorldIdObject(int ID)
 		4, 0, 2
 	};
 
-	for (size_t i = 0; i < 36; i++)
-	{
-		m_indices[i] = indices[i];
-	}
+	memcpy(m_indices, indices, 36);
 }
 
 

@@ -267,22 +267,6 @@ void CProyectoFinal::render()
 /* */
 bool CProyectoFinal::loadWorld()
 {
-	std::wstring wresourceFilenameVS;
-	std::wstring wresourceFilenameFS;
-	std::string resourceFilenameVS;
-	std::string resourceFilenameFS;
-
-	// If resource files cannot be found, return
-	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_3D_OBJECTS, wresourceFilenameVS, resourceFilenameVS) ||
-		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_3D_OBJECTS, wresourceFilenameFS, resourceFilenameFS))
-	{
-		Log << "ERROR: Unable to find one or more resources: " << endl;
-		Log << "  " << VERTEX_SHADER_3D_OBJECTS << endl;
-		Log << "  " << FRAGMENT_SHADER_3D_OBJECTS << endl;
-
-		return false;
-	}
-
 	// Unload any current 3D model
 	unloadWorld();
 

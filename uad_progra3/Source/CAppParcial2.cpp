@@ -288,7 +288,7 @@ void CAppParcial2::render()
 			// Get a matrix that has both the object rotation and translation
 			MathHelper::Matrix4 modelMatrix   = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, m_objectPosition);
 
-			getOpenGLRenderer()->renderObject(
+			getOpenGLRenderer()->renderWireframeObject(
 				m_p3DModel->getShaderProgramId(),
 				m_p3DModel->getGraphicsMemoryObjectId(),
 				m_p3DModel->getNumFaces(), 
@@ -319,12 +319,12 @@ bool CAppParcial2::load3DModel(const wchar_t * const filename)
 	std::string resourceFilenameFS;
 
 	// If resource files cannot be found, return
-	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_3D_OBJECTS, wresourceFilenameVS, resourceFilenameVS) ||
-		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_3D_OBJECTS, wresourceFilenameFS, resourceFilenameFS))
+	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_WIREFRAME, wresourceFilenameVS, resourceFilenameVS) ||
+		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_WIREFRAME, wresourceFilenameFS, resourceFilenameFS))
 	{
 		Log << "ERROR: Unable to find one or more resources: " << endl;
-		Log << "  " << VERTEX_SHADER_3D_OBJECTS << endl;
-		Log << "  " << FRAGMENT_SHADER_3D_OBJECTS << endl;
+		Log << "  " << VERTEX_SHADER_WIREFRAME << endl;
+		Log << "  " << FRAGMENT_SHADER_WIREFRAME << endl;
 
 		return false;
 	}
@@ -341,7 +341,7 @@ bool CAppParcial2::load3DModel(const wchar_t * const filename)
 	if (loaded)
 	{
 		// Allocate graphics memory for object
-		loaded = getOpenGLRenderer()->allocateGraphicsMemoryForObject(
+		/*loaded = getOpenGLRenderer()->allocateGraphicsMemoryForObject(
 			m_p3DModel->getShaderProgramId(),
 			resourceFilenameVS.c_str(),
 			resourceFilenameFS.c_str(),
@@ -358,7 +358,26 @@ bool CAppParcial2::load3DModel(const wchar_t * const filename)
 			((m_p3DModel)?(m_p3DModel->getNumFaces()):0),
 			m_p3DModel->getModelUVCoordIndices(),
 			((m_p3DModel)?(m_p3DModel->getNumFaces()):0)
-		);
+		);*/
+
+		loaded = getOpenGLRenderer()->createShaderProgram(
+			m_p3DModel->getShaderProgramId(),
+			resourceFilenameVS.c_str(),
+			resourceFilenameFS.c_str());
+
+		// If error ocurred, cleanup memory
+		if (!loaded)
+		{
+			unloadCurrent3DModel();
+		}
+
+		loaded = getOpenGLRenderer()->allocateGraphicsMemoryForObject(
+			m_p3DModel->getShaderProgramId(),
+			m_p3DModel->getGraphicsMemoryObjectId(),
+			m_p3DModel->getModelVertices(),
+			m_p3DModel->getNumVertices(),
+			m_p3DModel->getModelVertexIndices(),
+			m_p3DModel->getNumFaces());
 
 		// If error ocurred, cleanup memory
 		if (!loaded)

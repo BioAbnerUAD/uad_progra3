@@ -40,12 +40,13 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 	std::string resourceFilenameFS;
 
 	// If resource files cannot be found, return
-	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_3D_OBJECTS, wresourceFilenameVS, resourceFilenameVS) ||
-		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_3D_OBJECTS, wresourceFilenameFS, resourceFilenameFS))
+	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_WIREFRAME, wresourceFilenameVS, resourceFilenameVS) ||
+		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_WIREFRAME, wresourceFilenameFS, resourceFilenameFS))
 	{
 		Log << "ERROR: Unable to find one or more resources: " << endl;
-		Log << "  " << VERTEX_SHADER_3D_OBJECTS << endl;
-		Log << "  " << FRAGMENT_SHADER_3D_OBJECTS << endl;
+		Log << "  " << VERTEX_SHADER_WIREFRAME << endl;
+		Log << "  " << FRAGMENT_SHADER_WIREFRAME << endl;
+
 		return false;
 	}
 
@@ -74,7 +75,7 @@ void CWorld::render(CVector3 camPosition)
 	// Get a matrix that has both the object rotation and translation
 	MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, camPosition);
 
-	renderer->renderObject(&shaderProgramID, &VAOID, getNumFaces(), color, &modelMatrix);
+	renderer->renderWireframeObject(&shaderProgramID, &VAOID, getNumFaces(), color, &modelMatrix);
 }
 
 void CWorld::save()
