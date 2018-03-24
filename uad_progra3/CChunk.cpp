@@ -12,10 +12,10 @@ CChunk::CChunk(vector<CWorldIdObject*>* idObjs, int x, int y):x(x),y(y)
 	CWorldIdObject* idObj = idObjs->operator[](0);
 
 	for (size_t i = 0; i < CHUNK_SIZE; i++)
-		for (size_t j = 0; j < CHUNK_SIZE; j++)
-			for (size_t k = 0; k < CHUNK_HEIGHT; k++)
+		for (int j = 0; j < CHUNK_HEIGHT; j++)
+			for (size_t k = 0; k < CHUNK_SIZE; k++)
 			{
-				CVector3 centro(i, j, k);
+				CVector3 centro(i, -j, k);
 				blocks[i][j][k].initialize(centro, idObj);
 
 				for (size_t u = 0; u < 8; u++)
@@ -63,7 +63,7 @@ CChunk::CChunk(vector<CWorldIdObject*>* idObjs, int x, int y):x(x),y(y)
 	memcpy(this->m_verticesRaw, &verticesR[0], verticesR.size() * sizeof(float));
 
 	this->m_numFaces = indices.size() / 3;
-	this->m_numVertices = verticesR.size();
+	this->m_numVertices = vertices.size();
 }
 
 

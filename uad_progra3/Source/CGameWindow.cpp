@@ -242,7 +242,6 @@ void CGameWindow::mainLoop(void *appPointer)
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(m_Window))
 	{
-		numFramesRendered++;
 
 		/* Clear color and depth buffer */
 		m_ReferenceRenderer->clearScreen();
@@ -281,6 +280,7 @@ void CGameWindow::mainLoop(void *appPointer)
 
 		/* Render */
 		((CApp *)appPointer)->render();
+		numFramesRendered++;
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(m_Window);

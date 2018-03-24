@@ -104,9 +104,9 @@ void CWorld::save()
 
 			for (size_t i = 0; i < CHUNK_SIZE; i++)
 			{
-				for (size_t j = 0; j < CHUNK_SIZE; j++)
+				for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 				{
-					for (size_t k = 0; k < CHUNK_HEIGHT; k++)
+					for (size_t k = 0; k < CHUNK_SIZE; k++)
 					{
 						int id = chunk.second->blocks[i][j][k].instance->worldObjectID;
 						stream.write((char*)&id, sizeof(int));
@@ -161,9 +161,9 @@ void CWorld::load()
 
 			for (size_t i = 0; i < CHUNK_SIZE; i++)
 			{
-				for (size_t j = 0; j < CHUNK_SIZE; j++)
+				for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 				{
-					for (size_t k = 0; k < CHUNK_HEIGHT; k++)
+					for (size_t k = 0; k < CHUNK_SIZE; k++)
 					{
 						int id;
 						stream.read((char*)&id, sizeof(int));

@@ -243,8 +243,6 @@ void CProyectoFinal::update(double deltaTime)
 void CProyectoFinal::render()
 {
 	CGameMenu *menu = getMenu();
-	CVector3 objPos2;
-	objPos2.setValues(m_objectPosition.getX() + 2.5f, m_objectPosition.getY(), m_objectPosition.getZ());
 
 	// If menu is active, render menu
 	if (menu != NULL && menu->isInitialized() && menu->isActive())
