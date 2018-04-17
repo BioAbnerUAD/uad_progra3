@@ -11,9 +11,6 @@
 
 int main(int argc, char** argv)
 {
-	/*for (size_t i = 0; i < argc; i++)
-		std::cout << argv[i] << std::endl;*/
-
 	CApp *app = NULL;                  // Pointer to BASE class CApp
 	//app = new CAppParcial2(800, 600);
 	app = new CProyectoFinal(800, 600);
