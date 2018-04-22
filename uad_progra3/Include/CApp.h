@@ -8,6 +8,9 @@
 #include "COpenGLRenderer.h"
 #include "CCamera.h"
 
+#define DEFAULT_MOVEMENT_SPEED 0.2f
+#define DEFAULT_ROTATION_SPEED 0.005f
+
 #define KEY_MOD_SHIFT     0x0001
 #define KEY_MOD_CONTROL   0x0002
 #define KEY_MOD_ALT       0x0004
@@ -68,6 +71,10 @@ public:
 	virtual void onArrowRight(int mods) {}
 
 	virtual void onMouseMove(float deltaX, float deltaY) {}
+	virtual void onSpaceBar(int mods) {};
+	virtual void onCKey(int mods) {};
+
+	virtual void onMouseLeftClick() {};
 
 	// Methods to run/render the app and initialize the menu
 	// *Note: They are PURE VIRTUAL METHODS, so we cannot create an object of this base class (compiler won't allow it),

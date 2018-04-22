@@ -1,7 +1,8 @@
 #include "../Include/CCubeGrid.h"
 #include <string>
 
-CCubeGrid::CCubeGrid()
+CCubeGrid::CCubeGrid() : chunks(Zone(CVector3(0, 0, 0),
+	CVector3(CHUNK_SIZE * 64, CHUNK_HEIGHT * 8, CHUNK_SIZE * 64)))
 {
 }
 
@@ -10,14 +11,21 @@ CCubeGrid::~CCubeGrid()
 {
 }
 
-CChunk * CCubeGrid::getChunk(int x, int y)
+CChunk * CCubeGrid::getChunk(CVector3 pos)
 {
-	return chunks[std::to_string(x) + "," + std::to_string(y)];
+	return chunks.GetIndex(pos);
+}
+
+CChunk * CCubeGrid::getChunk(float x, float y, float z)
+{
+	CVector3 pos(x, y, z);
+	return chunks.GetIndex(pos);
 }
 
 void CCubeGrid::addChunk(CChunk * chunk)
 {
-	chunks.insert(std::pair<std::string, CChunk*>(std::to_string(chunk->x) + "," + std::to_string(chunk->y), chunk));
+	chunks.Insert(chunk, CVector3(
+		(float)chunk->x, (float)chunk->y, (float)chunk->z));
 }
 
 size_t CCubeGrid::chunksSize()
@@ -25,7 +33,7 @@ size_t CCubeGrid::chunksSize()
 	return chunks.size();
 }
 
-const std::map<std::string, CChunk*>* CCubeGrid::getChunks() const
+OctTree<CChunk>* CCubeGrid::getChunks()
 {
 	return &chunks;
 }

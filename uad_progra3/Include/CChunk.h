@@ -2,21 +2,27 @@
 #include "CCell.h"
 #include <vector>
 
-// Constants based in minecraft
-// https://minecraft.gamepedia.com/Chunk
-// 64x64x256  blocks
-
-#define CHUNK_SIZE 64		//64 
+#define CHUNK_SIZE 8		//64 
 #define CHUNK_HEIGHT 2		//256
 #define BLOCK_SIZE 1.0f
 
 class CChunk
 {
 public:
-	CChunk(std::vector<CWorldIdObject*>* idObjs, int x, int y);
+	CChunk(CWorldIdObject* idObj, int x, int y, int z);
 	~CChunk();
 	CCell blocks[CHUNK_SIZE][CHUNK_HEIGHT][CHUNK_SIZE];
-	int x, y;
+	int x, y, z;
+
+	unsigned int shaderProgramID = 0;
+	unsigned int VAOID = 0;
+
+	float* getVertices() { return m_verticesRaw; }
+	size_t getNumVertices() { return m_numVertices; }
+	unsigned short* getVertexIndices() { return m_vertexIndices; }
+	size_t getNumFaces() { return m_numFaces; }
+private:
+
 	unsigned short *m_vertexIndices;
 
 	CVector3 *m_vertices;

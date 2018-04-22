@@ -11,5 +11,5 @@ protected:
 public:
 	static CLogger* GetInstance();
 	static void ResetInstance();
-	std::ostream& const Out();
+	std::ostream& Out();
 };

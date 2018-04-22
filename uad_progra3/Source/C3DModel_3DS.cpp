@@ -58,9 +58,9 @@ bool C3DModel_3DS::readFile(const char * filename)
 			memcpy(this->m_UVCoords, &(parser.UVcoords)[0], parser.UVcoords.size() * sizeof(CVector3));
 		}
 
-		this->m_numFaces = parser.indices.size() / 3;
-		this->m_numVertices = parser.vertices.size();
-		this->m_numUVCoords = parser.UVcoords.size();
+		this->m_numFaces = (int)parser.indices.size() / 3;
+		this->m_numVertices = (int)parser.vertices.size();
+		this->m_numUVCoords = (int)parser.UVcoords.size();
 
 		m_Initialized = true;
 
@@ -150,7 +150,7 @@ void C3DModel_3DS::computeFaceNormals()
 	m_normals = new CVector3[m_numFaces];
 	m_normalsRaw = new float[m_numFaces * 3];
 	m_normalIndices = new unsigned short[m_numFaces * 3];
-	for (size_t i = 0; i < m_numFaces; i++)
+	for (unsigned short i = 0; i < m_numFaces; i++)
 	{
 		size_t ivert = i * 3;
 		CVector3 A = m_vertices[m_vertexIndices[ivert]];

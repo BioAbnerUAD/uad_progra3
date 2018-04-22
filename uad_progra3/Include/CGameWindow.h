@@ -52,6 +52,9 @@ private:
 	static bool requestArrowRight;         // Arrow right
 
 	static bool requestMouseMove;
+	static bool requestSpaceBar;
+	static bool requestCKey;
+	static bool requestMouseLeftClick;
 
 	static int  keyMods;                   // Key modifiers, they match the GLFW key modifiers (alt, ctrl, shift)
 
@@ -71,6 +74,7 @@ private:
 	// This callback will be called by GLFW when a physical key is pressed in the keyboard
 	static void keyboardCallback(GLFWwindow * window, int key, int scancode, int action, int mods);
 	static void cursorPosCallback(GLFWwindow * window, double xpos, double ypos);
+	static void mouseClickCallback(GLFWwindow* window, int button, int action, int mods);
 
 	// Process user input (keyboard, mouse)
 	void processInput(void *appPointer);

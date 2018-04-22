@@ -29,6 +29,10 @@ bool CGameWindow::requestArrowDown          = false;
 bool CGameWindow::requestArrowLeft          = false;
 bool CGameWindow::requestArrowRight         = false;
 bool CGameWindow::requestMouseMove			= false;
+bool CGameWindow::requestSpaceBar			= false;
+bool CGameWindow::requestCKey				= false;
+bool CGameWindow::requestMouseLeftClick		= false;
+
 int  CGameWindow::keyMods                   = 0;
 
 int  CGameWindow::newWidth                  = 0;
@@ -196,6 +200,7 @@ bool CGameWindow::create(const char *windowTitle)
 
 	/* Mouse callback */
 	glfwSetCursorPosCallback(m_Window, cursorPosCallback);
+	glfwSetMouseButtonCallback(m_Window, mouseClickCallback);
 
 	return true;
 }
@@ -349,22 +354,32 @@ void CGameWindow::keyboardCallback(GLFWwindow * window, int key, int scancode, i
 			CGameWindow::requestF12 = true;
 			break;
 		// ARROW DOWN key selects the next menu item if menu is active, application-specific otherwise
+		case GLFW_KEY_S:
 		case GLFW_KEY_DOWN:
 			CGameWindow::requestSelectNextMenuItem = true;
 			CGameWindow::requestArrowDown = true;
 			break;
 		// ARROW UP key selects the prev menu item if menu is active, application-specific otherwise
+		case GLFW_KEY_W:
 		case GLFW_KEY_UP:
 			CGameWindow::requestSelectPrevMenuItem = true;
 			CGameWindow::requestArrowUp = true;
 			break;
 		// ARROW LEFT, app-specific
+		case GLFW_KEY_A:
 		case GLFW_KEY_LEFT:
 			CGameWindow::requestArrowLeft = true;
 			break;
 		// ARROW RIGHT, app-specific
+		case GLFW_KEY_D:
 		case GLFW_KEY_RIGHT:
 			CGameWindow::requestArrowRight = true;
+			break;
+		case GLFW_KEY_SPACE:
+			CGameWindow::requestSpaceBar = true;
+			break;
+		case GLFW_KEY_C:
+			CGameWindow::requestCKey = true;
 			break;
 		// ARROW RIGHT, app-specific
 		// ENTER key executes the current menu item action
@@ -380,17 +395,27 @@ void CGameWindow::keyboardCallback(GLFWwindow * window, int key, int scancode, i
 
 		switch (key)
 		{
+		case GLFW_KEY_W:
 		case GLFW_KEY_UP:
 			CGameWindow::requestArrowUp = false;
 			break;
+		case GLFW_KEY_S:
 		case GLFW_KEY_DOWN:
 			CGameWindow::requestArrowDown = false;
 			break;
+		case GLFW_KEY_A:
 		case GLFW_KEY_LEFT:
 			CGameWindow::requestArrowLeft = false;
 			break;
+		case GLFW_KEY_D:
 		case GLFW_KEY_RIGHT:
 			CGameWindow::requestArrowRight = false;
+			break; 
+		case GLFW_KEY_SPACE:
+			CGameWindow::requestSpaceBar = false;
+			break;
+		case GLFW_KEY_C:
+			CGameWindow::requestCKey = false;
 			break;
 		}
 	}
@@ -400,7 +425,7 @@ void CGameWindow::keyboardCallback(GLFWwindow * window, int key, int scancode, i
 */
 void CGameWindow::cursorPosCallback(GLFWwindow * window, double xpos, double ypos)
 {
-	CVector3 newPos(xpos, ypos, 0);
+	CVector3 newPos((float)xpos, (float)ypos, 0);
 	if (!isCursorInitialized)
 	{
 		lastCursorPos = newPos;
@@ -417,6 +442,14 @@ void CGameWindow::cursorPosCallback(GLFWwindow * window, double xpos, double ypo
 		requestMouseMove = false;
 		cursorMovement.setValues(0, 0, 0);
 	}
+}
+
+/*
+*/
+void CGameWindow::mouseClickCallback(GLFWwindow * window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+		CGameWindow::requestMouseLeftClick = true;
 }
 
 /*
@@ -561,6 +594,19 @@ void CGameWindow::processInput(void *appPointer)
 			{
 				((CApp *)appPointer)->onMouseMove(cursorMovement.getX(), cursorMovement.getY());
 				requestMouseMove = false;
+			}
+			if (CGameWindow::requestSpaceBar)
+			{
+				((CApp *)appPointer)->onSpaceBar(CGameWindow::keyMods);
+			}
+			if (CGameWindow::requestCKey)
+			{
+				((CApp *)appPointer)->onCKey(CGameWindow::keyMods);
+			}
+			if (CGameWindow::requestMouseLeftClick)
+			{
+				((CApp *)appPointer)->onMouseLeftClick();
+				requestMouseLeftClick = false;
 			}
 		}
 	}

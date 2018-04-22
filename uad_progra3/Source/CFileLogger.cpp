@@ -7,13 +7,13 @@ CFileLogger* CFileLogger::instance = nullptr;
 std::string getCurrentTime()
 {
 	time_t rawtime;
-	struct tm * timeinfo;
+	struct tm timeinfo;
 	char buffer[80];
 
 	time(&rawtime);
-	timeinfo = localtime(&rawtime);
+	localtime_s(&timeinfo, &rawtime);
 
-	strftime(buffer, sizeof(buffer), "%d-%m-%Y_%H-%M-%S", timeinfo);
+	strftime(buffer, sizeof(buffer), "%d-%m-%Y_%H-%M-%S", &timeinfo);
 	std::string str(buffer);
 
 	return str;
@@ -35,9 +35,10 @@ CFileLogger::CFileLogger()
 {
 	std::string folder;
 	_out = &outFile;
+	char* buff;
 
-	if(getenv("PROGRA_TEMP")) folder = getenv("PROGRA_TEMP");
-	else if (getenv("TEMP")) folder = getenv("TEMP");
+	if(buff = getenv("PROGRA_TEMP")) folder = buff;
+	else if (buff = getenv("TEMP")) folder = buff;
 	else throw new std::runtime_error("Temp folder enviroment vairable not found.");
 
 	folder += "\\";
@@ -49,7 +50,6 @@ CFileLogger::CFileLogger()
 
 	outFile.open(folder.c_str(), std::ios::out);
 }
-
 
 CFileLogger * CFileLogger::GetInstance()
 {

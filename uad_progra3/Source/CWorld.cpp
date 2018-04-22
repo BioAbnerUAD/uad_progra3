@@ -13,7 +13,12 @@ CWorld::~CWorld()
 {
 	// Free up graphics memory
 
-	renderer->freeGraphicsMemoryForObject( &shaderProgramID, &VAOID);
+	cubeGrid->getChunks()->ForEach([](void* obj, void* item) {
+		auto lthis = (CWorld*)obj;
+		auto chunk = (CChunk*)item;
+
+		lthis->renderer->freeGraphicsMemoryForObject(&chunk->shaderProgramID, &chunk->VAOID);
+	}, (void*)this);
 
 	if (isInitialized)
 	{
@@ -24,18 +29,24 @@ CWorld::~CWorld()
 
 bool CWorld::initialize(COpenGLRenderer* renderer)
 {
+	/* This area should be modified later to randomly generate World */
 	cubeGrid = new CCubeGrid();
-	CWorldIdObject* idObj = new CWorldIdObject(0);
-	idObject.push_back(idObj);
+	idObject.push_back(new CWorldIdObject(0));
+	idObject.push_back(new CWorldIdObject(1));
 
-	CChunk* chunk = new CChunk(&idObject, 0, 0);
-
-	cubeGrid->addChunk(chunk);
+	for (int i = -2; i < 3; i++)
+		for (int j = -2; j < 1; j++)
+			for (int k = -2; k < 3; k++)
+			{
+				cubeGrid->addChunk(new CChunk(idObject[0], i, j, k));
+			}
 
 	this->renderer = renderer;
+	/**/
 
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
+
 	std::string resourceFilenameVS;
 	std::string resourceFilenameFS;
 
@@ -49,33 +60,58 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 
 		return false;
 	}
+	else
+	{
+		vector<void*> params;
+		params.push_back(this);
+		params.push_back(&resourceFilenameVS);
+		params.push_back(&resourceFilenameFS);
 
-	renderer->createShaderProgram(&shaderProgramID, resourceFilenameVS.c_str(), resourceFilenameFS.c_str());
+		cubeGrid->getChunks()->ForEach([](vector<void*> params, void* item) {
+			auto chunk = (CChunk*)item;
+			auto lthis = (CWorld*)params[0];
+			auto resourceFilenameVS = (std::string*) params[1];
+			auto resourceFilenameFS = (std::string*) params[2];
 
-	isInitialized = renderer->allocateGraphicsMemoryForObject(
-		&shaderProgramID, &VAOID,
-		getVertices(),
-		getNumVertices(),
-		getVertexIndices(),
-		getNumFaces()
-	);
+			lthis->renderer->createShaderProgram(
+				&chunk->shaderProgramID, resourceFilenameVS->c_str(), resourceFilenameFS->c_str());
+
+			lthis->isInitialized = lthis->renderer->allocateGraphicsMemoryForObject(
+				&chunk->shaderProgramID, &chunk->VAOID,
+				chunk->getVertices(),
+				(int)chunk->getNumVertices(),
+				chunk->getVertexIndices(),
+				(int)chunk->getNumFaces()
+			);
+		}, params);
+	}
 
 	return isInitialized;
 }
 
-void CWorld::render(CVector3 camPosition)
+void CWorld::render(CVector3 camPosition, CVector3 camRotation)
 {
 	// White 
 	float color[3] = { 0.95f, 0.95f, 0.95f };
 
-	// convert total degrees rotated to radians;
-	//not using this yet
-	double totalDegreesRotatedRadians = 0 * 3.1459 / 180.0;
-
 	// Get a matrix that has both the object rotation and translation
-	MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, camPosition);
+	MathHelper::Matrix4 modelMatrix 
+		= MathHelper::FirstPersonModelMatrix((float)camRotation.getX(), (float)camRotation.getY(), camPosition);
 
-	renderer->renderWireframeObject(&shaderProgramID, &VAOID, getNumFaces(), color, &modelMatrix);
+	vector<void*> params;
+	params.push_back(this);
+	params.push_back(&color);
+	params.push_back(&modelMatrix);
+
+	cubeGrid->getChunks()->ForEach([](vector<void*> params, void* item) {
+		auto chunk = (CChunk*)item;
+		auto lthis = (CWorld*)params[0];
+		auto color = (float*)params[1];
+		auto modelMatrix = (MathHelper::Matrix4*) params[2];
+
+		lthis->renderer->renderWireframeObject(
+			&chunk->shaderProgramID, &chunk->VAOID, (int)chunk->getNumFaces(), color, modelMatrix);
+	}, params);
 }
 
 void CWorld::save()
@@ -95,12 +131,13 @@ void CWorld::save()
 		size_t chunkSize = cubeGrid->chunksSize();
 
 		stream.write((char*)&chunkSize, sizeof(size_t));
-		auto chunks = *(cubeGrid->getChunks());
 
-		for (auto chunk : chunks)
-		{
-			stream.write((char*)&chunk.second->x, sizeof(int));
-			stream.write((char*)&chunk.second->y, sizeof(int));
+		cubeGrid->getChunks()->ForEach([](void* obj, void* item) {
+			auto stream = (ofstream*)obj;
+			auto chunk = (CChunk*)item;
+			stream->write((char*)&(chunk->x), sizeof(int));
+			stream->write((char*)&(chunk->y), sizeof(int));
+			stream->write((char*)&(chunk->z), sizeof(int));
 
 			for (size_t i = 0; i < CHUNK_SIZE; i++)
 			{
@@ -108,12 +145,12 @@ void CWorld::save()
 				{
 					for (size_t k = 0; k < CHUNK_SIZE; k++)
 					{
-						int id = chunk.second->blocks[i][j][k].instance->worldObjectID;
-						stream.write((char*)&id, sizeof(int));
+						int id = chunk->blocks[i][j][k].instance->worldObjectID;
+						stream->write((char*)&id, sizeof(int));
 					}
 				}
 			}
-		}
+		}, (void*)&stream);
 
 		stream.close();
 	}
@@ -153,11 +190,12 @@ void CWorld::load()
 
 		for (size_t i = 0; i < chunkSize; i++)
 		{
-			int chunkX, chunkY;
+			int chunkX, chunkY, chunkZ;
 			stream.read((char*)&chunkX, sizeof(int));
 			stream.read((char*)&chunkY, sizeof(int));
+			stream.read((char*)&chunkZ, sizeof(int));
 
-			CChunk* chunk = new CChunk(&idObject, chunkX, chunkY);
+			auto chunk = new CChunk(idObject[0], chunkX, chunkY, chunkZ);
 
 			for (size_t i = 0; i < CHUNK_SIZE; i++)
 			{
@@ -179,24 +217,4 @@ void CWorld::load()
 
 		stream.close();
 	}
-}
-
-float * CWorld::getVertices()
-{
-	return cubeGrid->getChunk(0,0)->m_verticesRaw;
-}
-
-size_t CWorld::getNumVertices()
-{
-	return cubeGrid->getChunk(0, 0)->m_numVertices;
-}
-
-unsigned short * CWorld::getVertexIndices()
-{
-	return cubeGrid->getChunk(0, 0)->m_vertexIndices;
-}
-
-size_t CWorld::getNumFaces()
-{
-	return cubeGrid->getChunk(0, 0)->m_numFaces;
 }

@@ -20,11 +20,14 @@ public:
 	CVector3& operator+=(const CVector3 &other);
 	CVector3 operator+(const CVector3 &other);
 	CVector3 cross(const CVector3 &other);
+	float dot(const CVector3 &other);
 	CVector3 operator-(const CVector3 &other);
 	bool operator!=(const CVector3 &other);
+	bool operator==(const CVector3& other) const;
 
 	void setValues(float _x, float _y, float _z);
 	void setValues(float *values);
+	void rotate(float dx, float dy);
 	float getX() const { return m_X; }
 	float getY() const { return m_Y; }
 	float getZ() const { return m_Z; }

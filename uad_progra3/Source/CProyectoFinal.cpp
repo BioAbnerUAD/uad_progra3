@@ -10,13 +10,13 @@
 #include "../Include/C3DModel.h"
 #include "../Include/LoadTGA.h"
 #include "../Include/CWideStringHelper.h"
+#include "../Include/LineTracer.h"
 #include "../UTFConvert.h"
 
 /* */
 CProyectoFinal::CProyectoFinal() :
 	m_pWorld(NULL),
-	m_currentDeltaTime{ 0.0 },
-	m_objectPosition{ 0.0f, 0.0f, 0.0f }
+	m_currentDeltaTime{ 0.0 }
 {
 	Log << "Constructor: CProyectoFinal()" << endl;
 }
@@ -25,8 +25,7 @@ CProyectoFinal::CProyectoFinal() :
 CProyectoFinal::CProyectoFinal(int window_width, int window_height) :
 	CApp(window_width, window_height),
 	m_pWorld(NULL),
-	m_currentDeltaTime{ 0.0 },
-	m_objectPosition{ 0.0f, 0.0f, 0.0f }
+	m_currentDeltaTime{ 0.0 }
 {
 	Log << "Constructor: CProyectoFinal(int window_width, int window_height)" << endl;
 }
@@ -253,7 +252,8 @@ void CProyectoFinal::render()
 	{
 		if (m_pWorld != NULL)
 		{
-			m_pWorld->render(getCamera()->position);	
+			auto cam = getCamera();
+			m_pWorld->render(cam->getPosition(), cam->getRotation());
 		}
 		else
 		{
@@ -354,35 +354,69 @@ void CProyectoFinal::onF5(int mods)
 
 void CProyectoFinal::onArrowUp(int mods)
 {
-	CVector3 movement = { 0,0,-DEFAULT_MOVEMENT_SPEED };
-	m_objectPosition += movement;
+	CCamera* cam = getCamera();
+	if (cam != nullptr) cam->Move(
+		0, 0, -DEFAULT_MOVEMENT_SPEED);
 }
 
 void CProyectoFinal::onArrowDown(int mods)
 {
-	CVector3 movement = { 0,0,DEFAULT_MOVEMENT_SPEED };
-	m_objectPosition += movement;
+	CCamera* cam = getCamera();
+	if (cam != nullptr) cam->Move(
+		0, 0, DEFAULT_MOVEMENT_SPEED);
 }
 
 void CProyectoFinal::onArrowLeft(int mods)
 {
-	CVector3 movement = { -DEFAULT_MOVEMENT_SPEED,0,0 };
-	m_objectPosition += movement;
+	CCamera* cam = getCamera();
+	if (cam != nullptr) cam->Move(
+		-DEFAULT_MOVEMENT_SPEED, 0, 0);
 }
 
 void CProyectoFinal::onArrowRight(int mods)
 {
-	CVector3 movement = { DEFAULT_MOVEMENT_SPEED,0,0 };
-	m_objectPosition += movement;
+	CCamera* cam = getCamera();
+	if (cam != nullptr) cam->Move(
+		DEFAULT_MOVEMENT_SPEED, 0, 0);
 }
 
 void CProyectoFinal::onMouseMove(float dx, float dy)
 {
 	CCamera* cam = getCamera();
-	if (cam != nullptr) cam->Move(
-		-dx * DEFAULT_CAMERA_MOVE_SPEED,
-		dy * DEFAULT_CAMERA_MOVE_SPEED
+	if (cam != nullptr) cam->Rotate(
+		-dx * DEFAULT_ROTATION_SPEED,
+		dy * DEFAULT_ROTATION_SPEED
 	);
+}
+
+void CProyectoFinal::onSpaceBar(int mods)
+{
+	CCamera* cam = getCamera();
+	if (cam != nullptr) cam->Move(
+		0, DEFAULT_MOVEMENT_SPEED, 0);
+}
+
+void CProyectoFinal::onCKey(int mods)
+{
+	CCamera* cam = getCamera();
+	if (cam != nullptr) cam->Move(
+		0, -DEFAULT_MOVEMENT_SPEED, 0);
+}
+
+void CProyectoFinal::onMouseLeftClick()
+{
+	std::vector<CVector3> line;
+
+	LineTracer::LineSamples(
+		getCamera()->getPosition(), getCamera()->getLookAt(), &line);
+
+	for (size_t i = 0; i < line.size(); i++)
+	{
+		std::cout << "LineTrace: "
+			<< line[i].getX() << ", "
+			<< line[i].getY() << ", "
+			<< line[i].getZ() << std::endl;
+	}
 }
 
 /* */

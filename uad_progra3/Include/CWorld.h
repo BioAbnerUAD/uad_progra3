@@ -6,7 +6,7 @@
 #include <vector>
 
 #define FILE_HEADER "MAINCRA UORL FA-IL" //:V
-#define VERSION_NO 1
+#define VERSION_NO 2
 #define SUB_VERSION_NO 1
 
 
@@ -16,7 +16,7 @@ public:
 	CWorld();
 	~CWorld();
 	bool initialize(COpenGLRenderer* renderer);
-	void render(CVector3 camPosition);
+	void render(CVector3 camPosition, CVector3 camRotation);
 	void save();
 	void load();
 	vector<CWorldIdObject*> idObject;
@@ -24,13 +24,5 @@ public:
 	bool isInitialized;
 private:
 	COpenGLRenderer* renderer;
-
-	unsigned int shaderProgramID = 0;
-	unsigned int VAOID = 0;
-
-	float* getVertices();
-	size_t getNumVertices();
-	unsigned short* getVertexIndices();
-	size_t getNumFaces();
 };
 

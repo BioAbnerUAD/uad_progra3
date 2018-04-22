@@ -9,7 +9,8 @@ CLogger * CLogger::GetInstance()
 {
 	if (!instance)
 	{
-		if (getenv("PROGRA3_FILE_LOG") != nullptr)
+		char* buff;
+		if (buff = getenv("PROGRA3_FILE_LOG"))
 			CLogger::instance = CFileLogger::GetInstance();
 		else
 			CLogger::instance = CConsoleLogger::GetInstance();
@@ -23,7 +24,7 @@ void CLogger::ResetInstance()
 	instance = nullptr;
 }
 
-std::ostream & const CLogger::Out()
+std::ostream & CLogger::Out()
 {
 	return *_out;
 }

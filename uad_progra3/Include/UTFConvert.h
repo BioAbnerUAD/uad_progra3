@@ -10,7 +10,7 @@ namespace UTFConvert
 	{
 		if ((szUTF8 == NULL) || (*szUTF8 == '\0')) return new wchar_t(L'\0');
 
-		int size = strlen(szUTF8);
+		int size = (int)strlen(szUTF8);
 
 		int new_size = MultiByteToWideChar(CP_UTF8, 0, szUTF8, size, NULL, 0);
 		wchar_t* wtext = new wchar_t[new_size];
@@ -24,7 +24,7 @@ namespace UTFConvert
 	{
 		if ((szUTF16 == NULL) || (*szUTF16 == L'\0')) return new char('\0');
 
-		int size = wcslen(szUTF16);
+		int size = (int)wcslen(szUTF16);
 
 		int new_size = WideCharToMultiByte(CP_UTF8, 0, szUTF16, size, NULL, 0, NULL, NULL);
 		char* text = new char[new_size];

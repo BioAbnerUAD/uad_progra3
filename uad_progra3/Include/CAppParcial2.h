@@ -8,10 +8,6 @@
 #include "C3DModel.h"
 #include "CVector3.h"
 
-#define DEFAULT_MOVEMENT_SPEED 0.5
-#define DEFAULT_ROTATION_SPEED 90.0
-#define DEFAULT_CAMERA_MOVE_SPEED 0.015
-
 // Class that inherits from Base class CApp
 // Base class CApp has members for: CGameWindow, CGameMenu, and COpenGLRenderer, which we can access through the public/protected methods
 class CAppParcial2 : public CApp

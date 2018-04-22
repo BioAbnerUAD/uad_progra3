@@ -51,11 +51,11 @@ bool C3DModel_Obj::readFile(const char * const filename)
 					do {
 						getline(iss, token, ' ');
 					} while (token.empty());
-					verticesR.push_back(atof(token.c_str()));
+					verticesR.push_back((float)atof(token.c_str()));
 					getline(iss, token, ' ');
-					verticesR.push_back(atof(token.c_str()));
+					verticesR.push_back((float)atof(token.c_str()));
 					getline(iss, token, ' ');
-					verticesR.push_back(atof(token.c_str()));
+					verticesR.push_back((float)atof(token.c_str()));
 
 					auto it = verticesR.rbegin();
 					vertex.setValues(it[2], it[1], it[0]);
@@ -65,9 +65,9 @@ bool C3DModel_Obj::readFile(const char * const filename)
 				{
 					CVector3 vertex;
 					getline(iss, token, ' ');
-					UVcoordsR.push_back(atof(token.c_str()));
+					UVcoordsR.push_back((float)atof(token.c_str()));
 					getline(iss, token, ' ');
-					UVcoordsR.push_back(atof(token.c_str()));
+					UVcoordsR.push_back((float)atof(token.c_str()));
 
 					auto it = UVcoordsR.rbegin();
 					vertex.setValues(it[1], it[0], -1);
@@ -77,11 +77,11 @@ bool C3DModel_Obj::readFile(const char * const filename)
 				{
 					CVector3 vertex;
 					getline(iss, token, ' ');
-					normalsR.push_back(atof(token.c_str()));
+					normalsR.push_back((float)atof(token.c_str()));
 					getline(iss, token, ' ');
-					normalsR.push_back(atof(token.c_str()));
+					normalsR.push_back((float)atof(token.c_str()));
 					getline(iss, token, ' ');
-					normalsR.push_back(atof(token.c_str()));
+					normalsR.push_back((float)atof(token.c_str()));
 
 					auto it = normalsR.rbegin();
 					vertex.setValues(it[2], it[1], it[0]);
@@ -145,10 +145,10 @@ bool C3DModel_Obj::readFile(const char * const filename)
 		this->m_uvCoordsRaw = new float[UVcoordsR.size()];
 		memcpy(this->m_uvCoordsRaw, &UVcoordsR[0], UVcoordsR.size() * sizeof(float));
 
-		this->m_numFaces = indices.size() / 3;
-		this->m_numVertices = verticesR.size();
-		this->m_numNormals = normalsR.size();
-		this->m_numUVCoords = UVcoordsR.size();
+		this->m_numFaces = (int)indices.size() / 3;
+		this->m_numVertices = (int)verticesR.size();
+		this->m_numNormals = (int)normalsR.size();
+		this->m_numUVCoords = (int)UVcoordsR.size();
 
 		m_Initialized = true;
 		//cout << toString() << endl;

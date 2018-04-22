@@ -9,10 +9,6 @@
 #include "CVector3.h"
 #include "../CWorld.h"
 
-#define DEFAULT_MOVEMENT_SPEED 0.5
-#define DEFAULT_ROTATION_SPEED 90.0
-#define DEFAULT_CAMERA_MOVE_SPEED 0.05
-
 // Class that inherits from Base class CApp
 // Base class CApp has members for: CGameWindow, CGameMenu, and COpenGLRenderer, which we can access through the public/protected methods
 class CProyectoFinal : public CApp
@@ -23,9 +19,6 @@ private:
 
 	// Current delta time (time of the current frame - time of the last frame)
 	double m_currentDeltaTime;
-
-	// Current object position
-	CVector3 m_objectPosition;
 
 protected:
 	// Method to initialize the menu
@@ -64,6 +57,9 @@ public:
 	void onArrowLeft(int mods);
 	void onArrowRight(int mods);
 	void onMouseMove(float dx, float dy);
+	void onSpaceBar(int mods);
+	void onCKey(int mods);
+	void onMouseLeftClick();
 
 private:
 

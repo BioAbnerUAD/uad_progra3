@@ -455,8 +455,8 @@ void CAppParcial2::onMouseMove(float deltaX, float deltaY)
 {
 	if (deltaX < 100 && deltaY < 100)
 	{
-		float moveX = -deltaX * DEFAULT_CAMERA_MOVE_SPEED;
-		float moveZ = -deltaY * DEFAULT_CAMERA_MOVE_SPEED;
+		float moveX = -deltaX * DEFAULT_ROTATION_SPEED;
+		float moveZ = -deltaY * DEFAULT_ROTATION_SPEED;
 
 		float currPos[3];
 		m_objectPosition.getValues(currPos);

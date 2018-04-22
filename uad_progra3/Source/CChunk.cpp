@@ -1,21 +1,20 @@
 #include "../Include/CChunk.h"
 #include <iostream>
 
-CChunk::CChunk(std::vector<CWorldIdObject*>* idObjs, int x, int y):x(x),y(y)
+CChunk::CChunk(CWorldIdObject* idObj, int x, int y, int z)
+	:x(x * CHUNK_SIZE),y(y * CHUNK_HEIGHT),z(z * CHUNK_SIZE)
 {
 	std::vector<unsigned short> indices(0);
 	std::vector<float> verticesR(0);
 	std::vector<CVector3> vertices(0);
 
-	size_t offset = 0;
-
-	CWorldIdObject* idObj = idObjs->operator[](0);
+	unsigned short offset = 0;
 
 	for (size_t i = 0; i < CHUNK_SIZE; i++)
 		for (int j = 0; j < CHUNK_HEIGHT; j++)
 			for (size_t k = 0; k < CHUNK_SIZE; k++)
 			{
-				CVector3 centro(i, -j, k);
+				CVector3 centro((float)(i + this->x), (float)(-j + this->y), (float)(k + this->z));
 				blocks[i][j][k].initialize(centro, idObj);
 
 				for (size_t u = 0; u < 8; u++)
@@ -47,8 +46,8 @@ CChunk::CChunk(std::vector<CWorldIdObject*>* idObjs, int x, int y):x(x),y(y)
 	this->m_verticesRaw = new float[verticesR.size()];
 	memcpy(this->m_verticesRaw, &verticesR[0], verticesR.size() * sizeof(float));
 
-	this->m_numFaces = indices.size() / 3;
-	this->m_numVertices = vertices.size();
+	this->m_numFaces = (int)indices.size() / 3;
+	this->m_numVertices = (int)vertices.size();
 }
 
 

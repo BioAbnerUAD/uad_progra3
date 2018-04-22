@@ -123,6 +123,9 @@
     <ClInclude Include="Include\OctTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\LineTracer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

@@ -3,8 +3,8 @@
 // These are some simple math helpers to enable the template to render a spinning cube. It is not a complete math library.
 // You can replace this with your favorite math library that's suitable for your target platforms, e.g. DirectXMath or GLM.
 
-#include <math.h>
 #include "CVector3.h"
+#include <math.h>
 
 namespace MathHelper
 {
@@ -22,6 +22,7 @@ namespace MathHelper
 		}
 
 		float m[4][4];
+
 	};
 
 	inline static Matrix4 IdentityMatrix()
@@ -80,5 +81,26 @@ namespace MathHelper
 			           0.0f,                    cotangent, 0.0f,                   0.0f,
 			           0.0f,                    0.0f,     -50.0f / (50.0f - 1.0f), (-50.0f * 1.0f) / (50.0f - 1.0f),
 			           0.0f,                    0.0f,     -1.0f,                   0.0f);
+	}
+
+	inline static Matrix4 FirstPersonModelMatrix(float anglePitchRadians, float angleYawRadians, CVector3 camPos)
+	{
+		float cosPitch = cosf(anglePitchRadians);
+		float sinPitch = sinf(anglePitchRadians);
+		float cosYaw = cosf(-angleYawRadians);
+		float sinYaw = sinf(-angleYawRadians);
+
+		CVector3 xaxis (cosPitch, 0, -sinPitch );
+		CVector3 yaxis (sinPitch * sinYaw, cosYaw, cosPitch * sinYaw );
+		CVector3 zaxis (sinPitch * cosYaw, -sinYaw, cosYaw * cosPitch );
+
+		Matrix4 viewMatrix (
+			xaxis.getX(),            yaxis.getX(),          zaxis.getX(),		0,
+			xaxis.getY(),            yaxis.getY(),          zaxis.getY(),		0,
+			xaxis.getZ(),            yaxis.getZ(),			zaxis.getZ(),		0,
+			-xaxis.dot(camPos),		-yaxis.dot(camPos),		-zaxis.dot(camPos), 1
+		);
+
+		return viewMatrix;
 	}
 }

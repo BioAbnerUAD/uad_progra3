@@ -193,6 +193,7 @@
     <ClInclude Include="Include\CWorldIdObject.h" />
     <ClInclude Include="Include\CWorldObjectInstance.h" />
     <ClInclude Include="Include\Globals.h" />
+    <ClInclude Include="Include\LineTracer.h" />
     <ClInclude Include="Include\LoadShaders.h" />
     <ClInclude Include="Include\LoadTGA.h" />
     <ClInclude Include="Include\MathHelper.h" />
