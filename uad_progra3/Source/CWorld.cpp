@@ -29,8 +29,10 @@ CWorld::~CWorld()
 
 bool CWorld::initialize(COpenGLRenderer* renderer)
 {
-	/* This area should be modified later to randomly generate World */
 	cubeGrid = new CCubeGrid();
+
+#pragma region Generate_World
+	/*---This area should be modified later to randomly generate World---*/
 	idObject.push_back(new CWorldIdObject(0));
 	idObject.push_back(new CWorldIdObject(1));
 
@@ -38,11 +40,11 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 		for (int j = -2; j < 1; j++)
 			for (int k = -2; k < 3; k++)
 			{
-				cubeGrid->addChunk(new CChunk(idObject[0], i, j, k));
+				cubeGrid->addChunk(new CChunk(idObject[j == 0 ? 0 : 1], i, j, k));
 			}
+#pragma endregion Generate_World
 
 	this->renderer = renderer;
-	/**/
 
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;

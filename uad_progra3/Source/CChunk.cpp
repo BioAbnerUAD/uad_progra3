@@ -10,9 +10,9 @@ CChunk::CChunk(CWorldIdObject* idObj, int x, int y, int z)
 
 	unsigned short offset = 0;
 
-	for (size_t i = 0; i < CHUNK_SIZE; i++)
+	for (int i = 0; i < CHUNK_SIZE; i++)
 		for (int j = 0; j < CHUNK_HEIGHT; j++)
-			for (size_t k = 0; k < CHUNK_SIZE; k++)
+			for (int k = 0; k < CHUNK_SIZE; k++)
 			{
 				CVector3 centro((float)(i + this->x), (float)(-j + this->y), (float)(k + this->z));
 				blocks[i][j][k].initialize(centro, idObj);
