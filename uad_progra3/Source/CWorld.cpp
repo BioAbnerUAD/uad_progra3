@@ -2,6 +2,7 @@
 #include "../Include/CLogger.h"
 #include "../Include/CWideStringHelper.h"
 #include "../Include/Globals.h"
+#include "../Include/LoadTGA.h"
 #include <fstream>
 
 CWorld::CWorld()
@@ -46,6 +47,9 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 
 	this->renderer = renderer;
 
+	std::wstring wresourceFilenameTexture;
+	std::string resourceFilenameTexture;
+
 	std::wstring wresourceFilenameVS;
 	std::wstring wresourceFilenameFS;
 
@@ -53,66 +57,113 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 	std::string resourceFilenameFS;
 
 	// If resource files cannot be found, return
-	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_WIREFRAME, wresourceFilenameVS, resourceFilenameVS) ||
-		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_WIREFRAME, wresourceFilenameFS, resourceFilenameFS))
+	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_MC_CUBE, wresourceFilenameVS, resourceFilenameVS) ||
+		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_MC_CUBE, wresourceFilenameFS, resourceFilenameFS))
 	{
 		Log << "ERROR: Unable to find one or more resources: " << endl;
-		Log << "  " << VERTEX_SHADER_WIREFRAME << endl;
-		Log << "  " << FRAGMENT_SHADER_WIREFRAME << endl;
+		Log << "  " << VERTEX_SHADER_MC_CUBE << endl;
+		Log << "  " << FRAGMENT_SHADER_MC_CUBE << endl;
 
 		return false;
 	}
+	if (!CWideStringHelper::GetResourceFullPath(MC_CUBE_TEXTURE, wresourceFilenameTexture, resourceFilenameTexture))
+	{
+		cout << "ERROR: Unable to find one or more resources: " << endl;
+		cout << "  " << MC_CUBE_TEXTURE << endl;
+		return false;
+	}
+
+	// Initialize the texture
+	unsigned int mcCUbeTextureID = -1;
+
+	TGAFILE tgaFile;
+	tgaFile.imageData = NULL;
+
+	if (LoadTGAFile(resourceFilenameTexture.c_str(), &tgaFile))
+	{
+		if (tgaFile.imageData == NULL ||
+			tgaFile.imageHeight < 0 ||
+			tgaFile.imageWidth < 0)
+		{
+			if (tgaFile.imageData != NULL)
+			{
+				delete[] tgaFile.imageData;
+			}
+			return false;
+		}
+
+		// Create a texture object for the menu, and copy the texture data to graphics memory
+		if (!renderer->createTextureObject(
+			&mcCUbeTextureID,
+			tgaFile.imageData,
+			tgaFile.imageWidth,
+			tgaFile.imageHeight
+		))
+		{
+			return false;
+		}
+
+		// Texture data is stored in graphics memory now, we don't need this copy anymore
+		if (tgaFile.imageData != NULL)
+		{
+			delete[] tgaFile.imageData;
+		}
+	}
 	else
 	{
-		vector<void*> params;
-		params.push_back(this);
-		params.push_back(&resourceFilenameVS);
-		params.push_back(&resourceFilenameFS);
+		// Free texture data
+		if (tgaFile.imageData != NULL)
+		{
+			delete[] tgaFile.imageData;
+		}
 
-		cubeGrid->getChunks()->ForEach([](vector<void*> params, void* item) {
-			auto chunk = (CChunk*)item;
-			auto lthis = (CWorld*)params[0];
-			auto resourceFilenameVS = (std::string*) params[1];
-			auto resourceFilenameFS = (std::string*) params[2];
-
-			lthis->renderer->createShaderProgram(
-				&chunk->shaderProgramID, resourceFilenameVS->c_str(), resourceFilenameFS->c_str());
-
-			lthis->isInitialized = lthis->renderer->allocateGraphicsMemoryForObject(
-				&chunk->shaderProgramID, &chunk->VAOID,
-				chunk->getVertices(),
-				(int)chunk->getNumVertices(),
-				chunk->getVertexIndices(),
-				(int)chunk->getNumFaces()
-			);
-		}, params);
+		return false;
 	}
+
+	vector<void*> params;
+	params.push_back(this);
+	params.push_back(&resourceFilenameVS);
+	params.push_back(&resourceFilenameFS);
+	params.push_back(&mcCUbeTextureID);
+
+	cubeGrid->getChunks()->ForEach([](vector<void*> params, void* item) {
+		auto chunk = (CChunk*)item;
+		auto lthis = (CWorld*)params[0];
+		auto resourceFilenameVS = (std::string*) params[1];
+		auto resourceFilenameFS = (std::string*) params[2];
+		chunk->textureID = *((unsigned int*) params[3]);
+
+		lthis->renderer->initializeMCObjects(
+			&chunk->shaderProgramID, &chunk->VAOID,
+			resourceFilenameVS->c_str(), resourceFilenameFS->c_str(),
+			chunk->getVertices(),
+			(int)chunk->getNumVertices(),
+			chunk->getUVs(),
+			chunk->getVertexIndices(),
+			(int)chunk->getNumFaces()
+		);
+	}, params);
 
 	return isInitialized;
 }
 
 void CWorld::render(CVector3 camPosition, CVector3 camRotation)
 {
-	// White 
-	float color[3] = { 0.95f, 0.95f, 0.95f };
-
 	// Get a matrix that has both the object rotation and translation
 	MathHelper::Matrix4 modelMatrix 
 		= MathHelper::FirstPersonModelMatrix((float)camRotation.getX(), (float)camRotation.getY(), camPosition);
 
 	vector<void*> params;
 	params.push_back(this);
-	params.push_back(&color);
 	params.push_back(&modelMatrix);
 
 	cubeGrid->getChunks()->ForEach([](vector<void*> params, void* item) {
 		auto chunk = (CChunk*)item;
 		auto lthis = (CWorld*)params[0];
-		auto color = (float*)params[1];
-		auto modelMatrix = (MathHelper::Matrix4*) params[2];
+		auto modelMatrix = (MathHelper::Matrix4*) params[1];
 
-		lthis->renderer->renderWireframeObject(
-			&chunk->shaderProgramID, &chunk->VAOID, (int)chunk->getNumFaces(), color, modelMatrix);
+		lthis->renderer->renderMCObjects(
+			&chunk->textureID, &chunk->shaderProgramID, &chunk->VAOID, (int)chunk->getNumFaces(), modelMatrix);
 	}, params);
 }
 

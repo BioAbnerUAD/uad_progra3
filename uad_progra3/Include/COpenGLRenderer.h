@@ -214,6 +214,13 @@ public:
 	void renderMCCube(MathHelper::Matrix4 *objectTransformation = NULL);
 	void initializeMCCube(unsigned int textureObjectId);
 
+	void initializeMCObjects(unsigned int * shaderProgramId, unsigned int * vertexArrayObjectID, const char * vertexShader, const char * fragmentShader, GLfloat * vertices, int numVertices, GLfloat * UVcoords, unsigned short * indices, int numFaces);
+
+	
+	
+	
+	void renderMCObjects(unsigned int * textureObjectId, unsigned int * shaderProgramId, unsigned int * vertexArrayObjectID, int numFaces, MathHelper::Matrix4 * objectTransformation);
+
 	//
 	bool checkOpenGLError(char *operationAttempted);
 

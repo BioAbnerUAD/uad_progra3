@@ -1200,6 +1200,84 @@ void COpenGLRenderer::initializeMCCube(unsigned int textureObjectId)
 
 /*
 */
+void COpenGLRenderer::initializeMCObjects(
+	unsigned int *shaderProgramId,
+	unsigned int *vertexArrayObjectID,
+	const char *vertexShader,
+	const char *fragmentShader,
+	GLfloat *vertices, int numVertices,
+	GLfloat *UVcoords,
+	unsigned short *indices, int numFaces
+	)
+{
+	if (createShaderProgram(
+		shaderProgramId,
+		vertexShader,
+		fragmentShader
+	))
+	{
+		useShaderProgram(shaderProgramId);
+
+		// Get the shader uniform/attribute locations
+
+		// Attributes change per-vertex
+		sh_TestPositionAttribLocation = glGetAttribLocation(*shaderProgramId, "aPosition");
+		sh_TestColorAttribLocation = glGetAttribLocation(*shaderProgramId, "aColor");
+		sh_MCCubeUVAttribLocation = glGetAttribLocation(*shaderProgramId, "aUV");
+		// Uniforms change per-object
+		sh_ModelUniformLocation = glGetUniformLocation(*shaderProgramId, "uModelMatrix");
+		sh_ViewUniformLocation = glGetUniformLocation(*shaderProgramId, "uViewMatrix");
+		sh_ProjUniformLocation = glGetUniformLocation(*shaderProgramId, "uProjMatrix");
+		mMCCubeTextureUniformLocation = glGetUniformLocation(*shaderProgramId, "textureSampler");
+
+		// Create and bind a vertex array object
+		*vertexArrayObjectID = generateVertexArrayObjectID();
+
+		// Generate a buffer for the vertices and set its data
+		glGenBuffers(1, &mMCCubeVertexPositionBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, mMCCubeVertexPositionBuffer);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * 3 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+		// Link the vertex position buffer with the shader
+		glEnableVertexAttribArray(sh_TestPositionAttribLocation);
+		glVertexAttribPointer(sh_TestPositionAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
+		GLfloat* vertexColors = new GLfloat[numVertices * 3];
+		for (size_t i = 0; i < numVertices * 3; i++) vertexColors[i] = 1.0f;
+
+		// Generate a buffer for the colors and set its data
+		glGenBuffers(1, &mMCCubeVertexColorBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, mMCCubeVertexColorBuffer);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * 3 * sizeof(GLfloat), vertexColors, GL_STATIC_DRAW);
+		// Link the color buffer with the shader
+		glVertexAttribPointer(sh_TestColorAttribLocation, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(sh_TestColorAttribLocation);
+
+		// Generate a buffer for the UVs and set its data
+		glGenBuffers(1, &mMCCubeVertexUVBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, mMCCubeVertexUVBuffer);
+		glBufferData(GL_ARRAY_BUFFER, numVertices * 3 * sizeof(GLfloat), UVcoords, GL_STATIC_DRAW);
+		// Link the UV buffer with the shader
+		glVertexAttribPointer(sh_MCCubeUVAttribLocation, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+		glEnableVertexAttribArray(sh_MCCubeUVAttribLocation);
+
+		// Generate a buffer for the triangle indices and set its data
+		glGenBuffers(1, &mMCCubeIndexBuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mMCCubeIndexBuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, numFaces * 3 * sizeof(unsigned short), indices, GL_STATIC_DRAW);
+
+		// Unbind vertex array
+		glBindVertexArray(0);
+
+		// Unbind buffers
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		glUseProgram(0);
+	}
+}
+
+/*
+*/
 bool COpenGLRenderer::allocateGraphicsMemoryForMenuItem(
 	float topX,
 	float topY,
@@ -1437,6 +1515,89 @@ void COpenGLRenderer::renderMCCube(MathHelper::Matrix4 *objectTransformation)
 		glDrawElements(
 			GL_TRIANGLES,      // Triangles
 			(6 * 2) * 3,       // Number of indices: 36 indices (six faces, two triangles per face, 3 indices per triangle)
+			GL_UNSIGNED_SHORT, // Data type
+			0);
+
+		// Check for OpenGL errors
+		m_OpenGLError = checkOpenGLError("glDrawElements(GL_TRIANGLES)");
+		if (m_OpenGLError)
+			return;
+
+		// Unbind vertex array
+		glBindVertexArray(0);
+
+		// Unbind shader program
+		glUseProgram(0);
+	}
+}
+
+
+/*
+*/
+void COpenGLRenderer::renderMCObjects(
+	unsigned int * textureObjectId,
+	unsigned int *shaderProgramId,
+	unsigned int *vertexArrayObjectID,
+	int numFaces,
+	MathHelper::Matrix4 *objectTransformation)
+{
+	if (m_windowWidth > 0
+		&& m_windowHeight > 0
+		&& !m_OpenGLError)
+	{
+		if (!useShaderProgram(shaderProgramId))
+		{
+			m_OpenGLError = true;
+			glUseProgram(0);
+			return;
+		}
+
+		// BIND VERTEX ARRAY OBJECT !
+		// ============================================================================================================
+		glBindVertexArray(*vertexArrayObjectID);
+
+		// ====== Update Model View Projection matrices and pass them to the shader====================================
+		// This needs to be done per-frame because the values change over time
+		sh_ModelUniformLocation = glGetUniformLocation(*shaderProgramId, "uModelMatrix");
+		sh_ViewUniformLocation = glGetUniformLocation(*shaderProgramId, "uViewMatrix");
+		sh_ProjUniformLocation = glGetUniformLocation(*shaderProgramId, "uProjMatrix");
+
+		if (objectTransformation == NULL)
+		{
+			MathHelper::Matrix4 modelMatrix = MathHelper::SimpleModelMatrix(0.0f);
+			glUniformMatrix4fv(sh_ModelUniformLocation, 1, GL_FALSE, &(modelMatrix.m[0][0]));
+		}
+		else
+		{
+			glUniformMatrix4fv(sh_ModelUniformLocation, 1, GL_FALSE, &(objectTransformation->m[0][0]));
+		}
+
+		MathHelper::Matrix4 viewMatrix = MathHelper::SimpleViewMatrix(m_cameraDistance);
+		glUniformMatrix4fv(sh_ViewUniformLocation, 1, GL_FALSE, &(viewMatrix.m[0][0]));
+
+		MathHelper::Matrix4 projectionMatrix = MathHelper::SimpleProjectionMatrix(float(m_windowWidth) / float(m_windowHeight));
+		glUniformMatrix4fv(sh_ProjUniformLocation, 1, GL_FALSE, &(projectionMatrix.m[0][0]));
+
+		// Set the texture sampler uniform
+		if (mMCCubeTextureUniformLocation >= 0 && mMCCubeTextureID >= 0)
+		{
+			// DO NOT CALL glEnable(GL_TEXTURE_2D) OR OPENGL WILL RETURN AN "1280" ERROR
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, *textureObjectId);
+			glUniform1i(mMCCubeTextureUniformLocation, 0);
+		}
+		else
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+		// ====== DRAW ================================================================================================
+
+		// Draw 
+		glDrawElements(
+			GL_TRIANGLES,      // Triangles
+			(numFaces) * 3,       // Number of indices: 36 indices (six faces, two triangles per face, 3 indices per triangle)
 			GL_UNSIGNED_SHORT, // Data type
 			0);
 

@@ -14,10 +14,12 @@ public:
 	CCell blocks[CHUNK_SIZE][CHUNK_HEIGHT][CHUNK_SIZE];
 	int x, y, z;
 
+	unsigned int textureID = -1;
 	unsigned int shaderProgramID = 0;
 	unsigned int VAOID = 0;
 
 	float* getVertices() { return m_verticesRaw; }
+	float* getUVs() { return m_uvsRaw;  }
 	size_t getNumVertices() { return m_numVertices; }
 	unsigned short* getVertexIndices() { return m_vertexIndices; }
 	size_t getNumFaces() { return m_numFaces; }
@@ -27,6 +29,8 @@ private:
 
 	CVector3 *m_vertices;
 	float *m_verticesRaw;
+	CVector3 *m_uvs;
+	float *m_uvsRaw;
 
 	int m_numVertices, m_numFaces;
 };

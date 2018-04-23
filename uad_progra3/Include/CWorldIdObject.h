@@ -6,9 +6,10 @@ public:
 	CWorldIdObject(int ID);
 	~CWorldIdObject();
 	int ID;
-	CVector3 m_vertices[8];
-	float m_verticesRaw[24];
+	CVector3 m_vertices[14];
+	CVector3 m_UVs[14];
 	unsigned short m_indices[36];
-	int m_numFaces;
+	size_t m_numFaces;
+	size_t m_numVertices;
 };
 
