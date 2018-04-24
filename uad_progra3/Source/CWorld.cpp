@@ -7,19 +7,13 @@
 CWorld::CWorld()
 {
 	isInitialized = false;
+	idObject.push_back(new CWorldIdObject(0));
+	idObject.push_back(new CWorldIdObject(1));
 }
 
 CWorld::~CWorld()
 {
 	// Free up graphics memory
-
-	cubeGrid->getChunks()->ForEach([](void* obj, void* item) {
-		auto lthis = (CWorld*)obj;
-		auto chunk = (CChunk*)item;
-
-		lthis->renderer->freeGraphicsMemoryForObject(&chunk->shaderProgramID, &chunk->VAOID);
-	}, (void*)this);
-
 	if (isInitialized)
 	{
 		for (size_t i = 0; i < idObject.size(); i++) delete idObject[i];
@@ -33,86 +27,39 @@ bool CWorld::initialize(COpenGLRenderer* renderer)
 
 #pragma region Generate_World
 	/*---This area should be modified later to randomly generate World---*/
-	idObject.push_back(new CWorldIdObject(0));
-	idObject.push_back(new CWorldIdObject(1));
-
-	for (int i = -2; i < 3; i++)
-		for (int j = -2; j < 1; j++)
-			for (int k = -2; k < 3; k++)
-			{
-				cubeGrid->addChunk(new CChunk(idObject[j == 0 ? 0 : 1], i, j, k));
-			}
+	cubeGrid->addChunk(new CChunk(idObject[0], 0, 0, 0));
 #pragma endregion Generate_World
 
 	this->renderer = renderer;
 
-	std::wstring wresourceFilenameVS;
-	std::wstring wresourceFilenameFS;
-
-	std::string resourceFilenameVS;
-	std::string resourceFilenameFS;
-
-	// If resource files cannot be found, return
-	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_WIREFRAME, wresourceFilenameVS, resourceFilenameVS) ||
-		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_WIREFRAME, wresourceFilenameFS, resourceFilenameFS))
-	{
-		Log << "ERROR: Unable to find one or more resources: " << endl;
-		Log << "  " << VERTEX_SHADER_WIREFRAME << endl;
-		Log << "  " << FRAGMENT_SHADER_WIREFRAME << endl;
-
-		return false;
-	}
-	else
-	{
-		vector<void*> params;
-		params.push_back(this);
-		params.push_back(&resourceFilenameVS);
-		params.push_back(&resourceFilenameFS);
-
-		cubeGrid->getChunks()->ForEach([](vector<void*> params, void* item) {
-			auto chunk = (CChunk*)item;
-			auto lthis = (CWorld*)params[0];
-			auto resourceFilenameVS = (std::string*) params[1];
-			auto resourceFilenameFS = (std::string*) params[2];
-
-			lthis->renderer->createShaderProgram(
-				&chunk->shaderProgramID, resourceFilenameVS->c_str(), resourceFilenameFS->c_str());
-
-			lthis->isInitialized = lthis->renderer->allocateGraphicsMemoryForObject(
-				&chunk->shaderProgramID, &chunk->VAOID,
-				chunk->getVertices(),
-				(int)chunk->getNumVertices(),
-				chunk->getVertexIndices(),
-				(int)chunk->getNumFaces()
-			);
-		}, params);
-	}
-
+	isInitialized = true;
 	return isInitialized;
 }
 
 void CWorld::render(CVector3 camPosition, CVector3 camRotation)
 {
-	// White 
-	float color[3] = { 0.95f, 0.95f, 0.95f };
-
-	// Get a matrix that has both the object rotation and translation
-	MathHelper::Matrix4 modelMatrix 
-		= MathHelper::FirstPersonModelMatrix((float)camRotation.getX(), (float)camRotation.getY(), camPosition);
-
 	vector<void*> params;
 	params.push_back(this);
-	params.push_back(&color);
-	params.push_back(&modelMatrix);
+	params.push_back(&camPosition);
+	params.push_back(&camRotation);
 
 	cubeGrid->getChunks()->ForEach([](vector<void*> params, void* item) {
 		auto chunk = (CChunk*)item;
 		auto lthis = (CWorld*)params[0];
-		auto color = (float*)params[1];
-		auto modelMatrix = (MathHelper::Matrix4*) params[2];
+		auto camPosition = (CVector3*)params[1];
+		auto camRotation = (CVector3*)params[2];
 
-		lthis->renderer->renderWireframeObject(
-			&chunk->shaderProgramID, &chunk->VAOID, (int)chunk->getNumFaces(), color, modelMatrix);
+		for (int i = 0; i < CHUNK_SIZE; i++)
+			for (int j = 0; j < CHUNK_HEIGHT; j++)
+				for (int k = 0; k < CHUNK_SIZE; k++)
+				{
+					// Get a matrix that has both the object rotation and translation
+					MathHelper::Matrix4 modelMatrix
+						= MathHelper::FirstPersonModelMatrix((float)camRotation->getX(), (float)camRotation->getY(),
+							(*camPosition) + chunk->blocks[i][j][k].centro);
+
+					lthis->renderer->renderMCCube(&modelMatrix);
+				}
 	}, params);
 }
 

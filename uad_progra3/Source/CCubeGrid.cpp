@@ -2,7 +2,7 @@
 #include <string>
 
 CCubeGrid::CCubeGrid() : chunks(Zone(CVector3(0, 0, 0),
-	CVector3(CHUNK_SIZE * 64, CHUNK_HEIGHT * 8, CHUNK_SIZE * 64)))
+	CVector3(CHUNK_SIZE * GRID_SIZE, CHUNK_HEIGHT * GRID_HEIGHT, CHUNK_SIZE * GRID_SIZE)))
 {
 }
 

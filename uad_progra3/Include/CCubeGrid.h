@@ -1,6 +1,10 @@
 #pragma once
 #include "CChunk.h"
 #include "OctTree.h"
+
+#define GRID_SIZE 100
+#define GRID_HEIGHT 30
+
 class CCubeGrid
 {
 public:

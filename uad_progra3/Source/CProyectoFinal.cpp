@@ -60,6 +60,11 @@ void CProyectoFinal::run()
 				return;
 			}
 
+			if (!initializeMCCube())
+			{
+				return;
+			}
+
 			// Enter main loop
 			Log << "Entering Main loop" << endl;
 			getGameWindow()->mainLoop(this);
@@ -226,9 +231,77 @@ bool CProyectoFinal::initializeMenu()
 	return false;
 }
 
+bool CProyectoFinal::initializeMCCube()
+{
+	std::wstring wresourceFilenameTexture;
+	std::string resourceFilenameTexture;
+
+	// If resource files cannot be found, return
+	if (!CWideStringHelper::GetResourceFullPath(MC_CUBE_TEXTURE, wresourceFilenameTexture, resourceFilenameTexture))
+	{
+		cout << "ERROR: Unable to find one or more resources: " << endl;
+		cout << "  " << MC_CUBE_TEXTURE << endl;
+		return false;
+	}
+
+	// Initialize the texture
+	unsigned int mcCUbeTextureID = -1;
+
+	TGAFILE tgaFile;
+	tgaFile.imageData = NULL;
+
+	if (LoadTGAFile(resourceFilenameTexture.c_str(), &tgaFile))
+	{
+		if (tgaFile.imageData == NULL ||
+			tgaFile.imageHeight < 0 ||
+			tgaFile.imageWidth < 0)
+		{
+			if (tgaFile.imageData != NULL)
+			{
+				delete[] tgaFile.imageData;
+			}
+			return false;
+		}
+
+		// Create a texture object for the menu, and copy the texture data to graphics memory
+		if (!getOpenGLRenderer()->createTextureObject(
+			&mcCUbeTextureID,
+			tgaFile.imageData,
+			tgaFile.imageWidth,
+			tgaFile.imageHeight
+		))
+		{
+			return false;
+		}
+
+		// Texture data is stored in graphics memory now, we don't need this copy anymore
+		if (tgaFile.imageData != NULL)
+		{
+			delete[] tgaFile.imageData;
+		}
+	}
+	else
+	{
+		// Free texture data
+		if (tgaFile.imageData != NULL)
+		{
+			delete[] tgaFile.imageData;
+		}
+
+		return false;
+	}
+
+	// Initialize a Minecraft cube
+	getOpenGLRenderer()->initializeMCCube(mcCUbeTextureID);
+
+	return true;
+}
+
 /* */
 void CProyectoFinal::update(double deltaTime)
 {
+	double degreesToRotate = 0.0;
+
 	if (deltaTime <= 0.0f)
 	{
 		return;
@@ -236,6 +309,24 @@ void CProyectoFinal::update(double deltaTime)
 
 	// Save current delta time
 	m_currentDeltaTime = deltaTime;
+
+	// Calculate degrees to rotate
+	// ----------------------------------------------------------------------------------------------------------------------------------------
+	// degrees = rotation speed * delta time 
+	// deltaTime is expressed in milliseconds, but our rotation speed is expressed in seconds (convert delta time from milliseconds to seconds)
+	degreesToRotate = DEFAULT_ROTATION_SPEED * (deltaTime / 1000.0);
+	// accumulate rotation degrees
+	m_objectRotation += degreesToRotate;
+
+	// Reset rotation if needed
+	while (m_objectRotation > 360.0)
+	{
+		m_objectRotation -= 360.0;
+	}
+	if (m_objectRotation < 0.0)
+	{
+		m_objectRotation = 0.0;
+	}
 }
 
 /* */
@@ -250,16 +341,36 @@ void CProyectoFinal::render()
 	}
 	else // Otherwise, render active object if loaded (or test cube if no object is loaded)
 	{
-		if (m_pWorld != NULL)
+		if (m_pWorld != NULL && m_pWorld->isInitialized)
 		{
 			auto cam = getCamera();
 			m_pWorld->render(cam->getPosition(), cam->getRotation());
 		}
+		else if(!worldLoading)
+		{
+			worldLoading = true;
+			loadWorldHandler = CreateThread(NULL, 0, staticLoadWorld, this, 0, &loadWorldThreadID);
+		}
 		else
 		{
-			loadWorld();
+			// convert total degrees rotated to radians;
+			double totalDegreesRotatedRadians = m_objectRotation * 3.1459 / 180.0;
+
+			// Get a matrix that has both the object rotation and translation
+			MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, CVector3(0, 0, 0));
+
+			getOpenGLRenderer()->renderMCCube(&modelMatrix);
 		}
 	}
+}
+
+DWORD CProyectoFinal::staticLoadWorld(PVOID param)
+{
+	CProyectoFinal *myApp = (CProyectoFinal*)param;
+	Log << "Thread 1: Inicializando Grid" << endl;
+	bool loaded = myApp->loadWorld();
+	Log << "Thread 1: Grid Inicializada" << endl;
+	return loaded ? 0 : -1;
 }
 
 /* */
@@ -281,6 +392,7 @@ bool CProyectoFinal::loadWorld()
 		return false;
 	}
 
+	worldLoading = false;
 	return loaded;
 }
 

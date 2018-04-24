@@ -20,9 +20,14 @@ private:
 	// Current delta time (time of the current frame - time of the last frame)
 	double m_currentDeltaTime;
 
+	// Current object rotation (MC cube only), expressed in degrees
+	double m_objectRotation = 0;
+
 protected:
 	// Method to initialize the menu
 	bool initializeMenu();
+	// Method to initialize a MC cube and its texture
+	bool initializeMCCube();
 
 public:
 	// Constructors and destructor
@@ -64,8 +69,14 @@ public:
 private:
 
 	// Load/unload 3D model
+	static DWORD WINAPI staticLoadWorld(PVOID param);
 	bool loadWorld();
 	void unloadWorld();
+
+	// Load World Thread
+	DWORD loadWorldThreadID;
+	HANDLE loadWorldHandler = nullptr;
+	bool worldLoading = false;
 
 	// Move camera away/closer
 	void moveCamera(float direction);

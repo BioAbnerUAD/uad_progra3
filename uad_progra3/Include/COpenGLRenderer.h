@@ -37,6 +37,8 @@ private:
 	int m_windowHeight;
 	bool m_OpenGLError;
 
+	CRITICAL_SECTION cs;
+
 	GLint sh_ModelUniformLocation;
 	GLint sh_ViewUniformLocation;
 	GLint sh_ProjUniformLocation;

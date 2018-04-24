@@ -21,6 +21,7 @@ COpenGLRenderer::COpenGLRenderer() :
 {
 	mMCCubeTextureUniformLocation = -1;
 	mMCCubeTextureID = -1;
+	InitializeCriticalSection(&cs);
 }
 
 /*
@@ -100,6 +101,7 @@ bool COpenGLRenderer::createShaderProgram(unsigned int *shaderProgramId, const c
 {
 	if (shaderProgramId != NULL)
 	{
+		EnterCriticalSection(&cs);
 		ShaderInfo shaders[3];
 
 		shaders[0].type = GL_VERTEX_SHADER;
@@ -113,6 +115,7 @@ bool COpenGLRenderer::createShaderProgram(unsigned int *shaderProgramId, const c
 
 		*shaderProgramId = (unsigned int)LoadShaders(shaders);
 
+		LeaveCriticalSection(&cs);
 		return (*shaderProgramId > 0);
 	}
 
@@ -238,6 +241,7 @@ void COpenGLRenderer::setCurrentVertexAttribPointer(int vertexShaderAttribPos, i
 */
 bool COpenGLRenderer::freeGraphicsMemoryForObject(unsigned int *shaderProgramId, unsigned int *vertexArrayObjectID)
 {
+	EnterCriticalSection(&cs);
 	bool deletedShaderProgram = false;
 	bool deletedVertexArrayObjectId = false;
 
@@ -250,6 +254,7 @@ bool COpenGLRenderer::freeGraphicsMemoryForObject(unsigned int *shaderProgramId,
 		deletedVertexArrayObjectId = true;
 	}
 
+	LeaveCriticalSection(&cs);
 	return (deletedShaderProgram && deletedVertexArrayObjectId);
 }
 
@@ -306,10 +311,10 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 			|| normalPosAttribLocation < 0
 			|| uvPosAttribLocation < 0)
 		{
-			cout << "Unable to get shader program attribute locations" << endl;
-			cout << "vertexPosAttribLocation: " << vertexPosAttribLocation << endl;
-			cout << "normalPosAttribLocation: " << normalPosAttribLocation << endl;
-			cout << "uvPosAttribLocation: " << uvPosAttribLocation << endl;
+			Log << "Unable to get shader program attribute locations" << endl;
+			Log << "vertexPosAttribLocation: " << vertexPosAttribLocation << endl;
+			Log << "normalPosAttribLocation: " << normalPosAttribLocation << endl;
+			Log << "uvPosAttribLocation: " << uvPosAttribLocation << endl;
 			glUseProgram(0);
 			return false;
 		}
@@ -325,11 +330,11 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 			|| sh_ProjUniformLocation < 0
 			|| sh_colorUniformLocation < 0)
 		{
-			cout << "Unable to get shader program uniform locations" << endl;
-			cout << "sh_ModelUniformLocation: " << sh_ModelUniformLocation << endl;
-			cout << "sh_ViewUniformLocation: " << sh_ViewUniformLocation << endl;
-			cout << "sh_ProjUniformLocation: " << sh_ProjUniformLocation << endl;
-			cout << "sh_colorUniformLocation: " << sh_colorUniformLocation << endl;
+			Log << "Unable to get shader program uniform locations" << endl;
+			Log << "sh_ModelUniformLocation: " << sh_ModelUniformLocation << endl;
+			Log << "sh_ViewUniformLocation: " << sh_ViewUniformLocation << endl;
+			Log << "sh_ProjUniformLocation: " << sh_ProjUniformLocation << endl;
+			Log << "sh_colorUniformLocation: " << sh_colorUniformLocation << endl;
 			glUseProgram(0);
 			return false;
 		}
@@ -464,6 +469,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 	GLfloat *vertices, int numVertices,
 	unsigned short *indicesVertices, int numIndicesVert)
 {
+	EnterCriticalSection(&cs);
 	GLuint vertexPositionBuffer = 0;
 	GLuint indicesVertexBuffer = 0;
 
@@ -474,6 +480,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 		|| *shaderProgramId <= 0
 		|| !useShaderProgram(shaderProgramId))
 	{
+		LeaveCriticalSection(&cs);
 		return false;
 	}
 
@@ -485,9 +492,10 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 	// Check attribute locations are valid
 	if (vertexPosAttribLocation < 0)
 	{
-		cout << "Unable to get shader program attribute locations" << endl;
-		cout << "vertexPosAttribLocation: " << vertexPosAttribLocation << endl;
+		Log << "Unable to get shader program attribute locations" << endl;
+		Log << "vertexPosAttribLocation: " << vertexPosAttribLocation << endl;
 		glUseProgram(0);
+		LeaveCriticalSection(&cs);
 		return false;
 	}
 
@@ -502,12 +510,13 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 		|| sh_ProjUniformLocation < 0
 		|| sh_colorUniformLocation < 0)
 	{
-		cout << "Unable to get shader program uniform locations" << endl;
-		cout << "sh_ModelUniformLocation: " << sh_ModelUniformLocation << endl;
-		cout << "sh_ViewUniformLocation: " << sh_ViewUniformLocation << endl;
-		cout << "sh_ProjUniformLocation: " << sh_ProjUniformLocation << endl;
-		cout << "sh_colorUniformLocation: " << sh_colorUniformLocation << endl;
+		Log << "Unable to get shader program uniform locations" << endl;
+		Log << "sh_ModelUniformLocation: " << sh_ModelUniformLocation << endl;
+		Log << "sh_ViewUniformLocation: " << sh_ViewUniformLocation << endl;
+		Log << "sh_ProjUniformLocation: " << sh_ProjUniformLocation << endl;
+		Log << "sh_colorUniformLocation: " << sh_colorUniformLocation << endl;
 		glUseProgram(0);
+		LeaveCriticalSection(&cs);
 		return false;
 	}
 
@@ -540,6 +549,7 @@ bool COpenGLRenderer::allocateGraphicsMemoryForObject(
 
 	glUseProgram(0);
 
+	LeaveCriticalSection(&cs);
 	return true;
 }
 
@@ -578,7 +588,7 @@ bool COpenGLRenderer::generateRenderGeometry(
 		|| UVcoords == NULL
 		)
 	{
-		cout << "COpenGLRenderer::generateRenderGeometry() : Invalid pointers" << endl;
+		Log << "COpenGLRenderer::generateRenderGeometry() : Invalid pointers" << endl;
 		return false;
 	}
 
@@ -846,6 +856,7 @@ bool COpenGLRenderer::renderMenuItem(
 	GLfloat *menuItemColor
 )
 {
+	EnterCriticalSection(&cs);
 	if (shaderProgramId != NULL
 		&& textureObjectId != NULL
 		&& vertexArrayObjectId != NULL
@@ -861,6 +872,7 @@ bool COpenGLRenderer::renderMenuItem(
 		{
 			m_OpenGLError = true;
 			glUseProgram(0);
+			LeaveCriticalSection(&cs);
 			return false;
 		}
 
@@ -891,7 +903,10 @@ bool COpenGLRenderer::renderMenuItem(
 		// Check for OpenGL errors
 		m_OpenGLError = checkOpenGLError("glDrawElements(GL_TRIANGLES)");
 		if (m_OpenGLError)
+		{
+			LeaveCriticalSection(&cs);
 			return false;
+		}
 
 		// Unbind vertex array
 		glBindVertexArray(0);
@@ -899,9 +914,11 @@ bool COpenGLRenderer::renderMenuItem(
 		// Unbind shader program
 		glUseProgram(0);
 
+		LeaveCriticalSection(&cs);
 		return true;
 	}
 
+	LeaveCriticalSection(&cs);
 	return false;
 }
 
@@ -918,9 +935,9 @@ void COpenGLRenderer::initializeTestObjects()
 	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_TEST_OBJECT, wresourceFilenameVS, resourceFilenameVS) ||
 		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_TEST_OBJECT, wresourceFilenameFS, resourceFilenameFS))
 	{
-		cout << "ERROR: Unable to find one or more resources: " << endl;
-		cout << "  " << VERTEX_SHADER_TEST_OBJECT << endl;
-		cout << "  " << FRAGMENT_SHADER_TEST_OBJECT << endl;
+		Log << "ERROR: Unable to find one or more resources: " << endl;
+		Log << "  " << VERTEX_SHADER_TEST_OBJECT << endl;
+		Log << "  " << FRAGMENT_SHADER_TEST_OBJECT << endl;
 		return;
 	}
 
@@ -1032,9 +1049,9 @@ void COpenGLRenderer::initializeMCCube(unsigned int textureObjectId)
 	if (!CWideStringHelper::GetResourceFullPath(VERTEX_SHADER_MC_CUBE, wresourceFilenameVS, resourceFilenameVS) ||
 		!CWideStringHelper::GetResourceFullPath(FRAGMENT_SHADER_MC_CUBE, wresourceFilenameFS, resourceFilenameFS))
 	{
-		cout << "ERROR: Unable to find one or more resources: " << endl;
-		cout << "  " << VERTEX_SHADER_MC_CUBE << endl;
-		cout << "  " << FRAGMENT_SHADER_MC_CUBE << endl;
+		Log << "ERROR: Unable to find one or more resources: " << endl;
+		Log << "  " << VERTEX_SHADER_MC_CUBE << endl;
+		Log << "  " << FRAGMENT_SHADER_MC_CUBE << endl;
 		return;
 	}
 
@@ -1066,28 +1083,28 @@ void COpenGLRenderer::initializeMCCube(unsigned int textureObjectId)
 		// Test cube geometry.
 		GLfloat vertexPositions[] =
 		{
-			-1.0f,  1.0f, -1.0f,  // -x, +y, -z TOP LEFT, BACK      #0
-			-1.0f,  1.0f,  1.0f,  // -x, +y, +z TOP LEFT, FRONT     #1
+			-0.5f,  0.5f, -0.5f,  // -x, +y, -z TOP LEFT, BACK      #0
+			-0.5f,  0.5f,  0.5f,  // -x, +y, +z TOP LEFT, FRONT     #1
 
-			1.0f,  1.0f, -1.0f,  // +x, +y, -z TOP RIGHT, BACK     #2
-			1.0f,  1.0f,  1.0f,  // +x, +y, +z TOP RIGHT, FRONT    #3
+			0.5f,  0.5f, -0.5f,  // +x, +y, -z TOP RIGHT, BACK     #2
+			0.5f,  0.5f,  0.5f,  // +x, +y, +z TOP RIGHT, FRONT    #3
 
-			-1.0f, -1.0f, -1.0f,  // -x, -y, -z BOTTOM LEFT, BACK   #4
-			-1.0f, -1.0f,  1.0f,  // -x, -y, +z BOTTOM LEFT, FRONT  #5
+			-0.5f, -0.5f, -0.5f,  // -x, -y, -z BOTTOM LEFT, BACK   #4
+			-0.5f, -0.5f,  0.5f,  // -x, -y, +z BOTTOM LEFT, FRONT  #5
 
-			1.0f, -1.0f, -1.0f,  // +x, -y, -z BOTTOM RIGHT, BACK  #6
-			1.0f, -1.0f,  1.0f,  // +x, -y, +z BOTTOM RIGHT, FRONT #7
+			0.5f, -0.5f, -0.5f,  // +x, -y, -z BOTTOM RIGHT, BACK  #6
+			0.5f, -0.5f,  0.5f,  // +x, -y, +z BOTTOM RIGHT, FRONT #7
 
 								 // DUPLICATE VERTICES
 								 // -------------------
-								 -1.0f, -1.0f, -1.0f,  // -x, -y, -z BOTTOM LEFT, BACK   #8
-								 1.0f, -1.0f, -1.0f,  // +x, -y, -z BOTTOM RIGHT, BACK  #9
+								 -0.5f, -0.5f, -0.5f,  // -x, -y, -z BOTTOM LEFT, BACK   #8
+								 0.5f, -0.5f, -0.5f,  // +x, -y, -z BOTTOM RIGHT, BACK  #9
 
-								 -1.0f, -1.0f,  1.0f,  // -x, -y, +z BOTTOM LEFT, FRONT  #10
-								 1.0f, -1.0f,  1.0f,  // +x, -y, +z BOTTOM RIGHT, FRONT #11
+								 -0.5f, -0.5f,  0.5f,  // -x, -y, +z BOTTOM LEFT, FRONT  #10
+								 0.5f, -0.5f,  0.5f,  // +x, -y, +z BOTTOM RIGHT, FRONT #11
 
-								 -1.0f, -1.0f, -1.0f,  // -x, -y, -z BOTTOM LEFT, BACK   #12
-								 -1.0f, -1.0f,  1.0f   // -x, -y, +z BOTTOM LEFT, FRONT  #13
+								 -0.5f, -0.5f, -0.5f,  // -x, -y, -z BOTTOM LEFT, BACK   #12
+								 -0.5f, -0.5f,  0.5f   // -x, -y, +z BOTTOM LEFT, FRONT  #13
 		};
 
 		// Generate a buffer for the vertices and set its data
@@ -1380,6 +1397,7 @@ void COpenGLRenderer::renderTestObject(MathHelper::Matrix4 *objectTransformation
 */
 void COpenGLRenderer::renderMCCube(MathHelper::Matrix4 *objectTransformation)
 {
+	EnterCriticalSection(&cs);
 	if (m_windowWidth > 0
 		&& m_windowHeight > 0
 		&& !m_OpenGLError)
@@ -1388,6 +1406,7 @@ void COpenGLRenderer::renderMCCube(MathHelper::Matrix4 *objectTransformation)
 		{
 			m_OpenGLError = true;
 			glUseProgram(0);
+			LeaveCriticalSection(&cs);
 			return;
 		}
 
@@ -1443,7 +1462,10 @@ void COpenGLRenderer::renderMCCube(MathHelper::Matrix4 *objectTransformation)
 		// Check for OpenGL errors
 		m_OpenGLError = checkOpenGLError("glDrawElements(GL_TRIANGLES)");
 		if (m_OpenGLError)
+		{
+			LeaveCriticalSection(&cs);
 			return;
+		}
 
 		// Unbind vertex array
 		glBindVertexArray(0);
@@ -1451,6 +1473,7 @@ void COpenGLRenderer::renderMCCube(MathHelper::Matrix4 *objectTransformation)
 		// Unbind shader program
 		glUseProgram(0);
 	}
+	LeaveCriticalSection(&cs);
 }
 
 /*
@@ -1462,7 +1485,7 @@ bool COpenGLRenderer::checkOpenGLError(char *operationAttempted)
 	// check OpenGL error
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR) {
-		cerr << "OpenGL error on " << operationAttempted << ": " << err << endl;
+		Log << "OpenGL error on " << operationAttempted << ": " << err << endl;
 		errorDetected = true;
 	}
 
@@ -1489,10 +1512,12 @@ void COpenGLRenderer::moveCamera(float direction)
 */
 void COpenGLRenderer::deleteTexture(unsigned int *id)
 {
+	EnterCriticalSection(&cs);
 	if (id != NULL && *id > 0)
 	{
 		glDeleteTextures(1, id);
 	}
+	LeaveCriticalSection(&cs);
 }
 
 /*
