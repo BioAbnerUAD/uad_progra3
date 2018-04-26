@@ -1,7 +1,7 @@
 #pragma once
 #include "CVector3.h"
 #include <stdexcept>
-
+#include <vector>
 
 struct Zone
 {
@@ -60,6 +60,7 @@ public:
 	void ForEach(OctTreeForEachO callback, void* callbackObj);
 	void ForEach(OctTreeForEachP callback, std::vector<void*> params);
 	T* GetIndex(CVector3 pos);
+	bool DeleteIndex(CVector3 pos);
 
 private:
 	Zone boundary;
@@ -213,6 +214,94 @@ inline T * OctTree<T>::GetIndex(CVector3 pos)
 	else if (this->bnw->boundary.contains(pos)) return this->bnw->GetIndex(pos);
 	else if (this->bse->boundary.contains(pos)) return this->bse->GetIndex(pos);
 	else if (this->bsw->boundary.contains(pos)) return this->bsw->GetIndex(pos);
+	else return nullptr;
+}
+
+template<typename T>
+inline bool OctTree<T>::DeleteIndex(CVector3 pos)
+{
+	if (!this->hasElement) return false;
+	if (!this->divided)
+	{
+		if (this->pos != pos) return false;
+		delete data;
+		data = nullptr;
+		hasElement = false;
+		_totalSize--;
+		return true;
+	}
+	else if (this->tne->boundary.contains(pos))
+	{
+		if (this->tne->DeleteIndex(pos))
+		{
+			_totalSize--;
+			return true;
+		}
+		return false;
+	}
+	else if (this->tnw->boundary.contains(pos))
+	{
+		if (this->tnw->DeleteIndex(pos))
+		{
+			_totalSize--;
+			return true;
+		}
+		return false;
+	}
+	else if (this->tse->boundary.contains(pos))
+	{
+		if (this->tse->DeleteIndex(pos))
+		{
+			_totalSize--;
+			return true;
+		}
+		return false;
+	}
+	else if (this->tsw->boundary.contains(pos))
+	{
+		if (this->tsw->DeleteIndex(pos))
+		{
+			_totalSize--;
+			return true;
+		}
+		return false;
+	}
+	else if (this->bne->boundary.contains(pos))
+	{
+		if (this->bne->DeleteIndex(pos))
+		{
+			_totalSize--;
+			return true;
+		}
+		return false;
+	}
+	else if (this->bnw->boundary.contains(pos))
+	{
+		if (this->bnw->DeleteIndex(pos))
+		{
+			_totalSize--;
+			return true;
+		}
+		return false;
+	}
+	else if (this->bse->boundary.contains(pos))
+	{
+		if (this->bse->DeleteIndex(pos))
+		{
+			_totalSize--;
+			return true;
+		}
+		return false;
+	}
+	else if (this->bsw->boundary.contains(pos))
+	{
+		if (this->bsw->DeleteIndex(pos))
+		{
+			_totalSize--;
+			return true;
+		}
+		return false;
+	}
 	else throw new std::invalid_argument("Item does not belong in this boundary.");
 }
 

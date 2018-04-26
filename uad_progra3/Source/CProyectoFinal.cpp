@@ -354,10 +354,10 @@ void CProyectoFinal::render()
 		else
 		{
 			// convert total degrees rotated to radians;
-			double totalDegreesRotatedRadians = m_objectRotation * 3.1459 / 180.0;
+			double totalDegreesRotatedRadians = m_objectRotation * 50000 * 3.1459 / 180.0;
 
 			// Get a matrix that has both the object rotation and translation
-			MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, CVector3(0, 0, 0));
+			MathHelper::Matrix4 modelMatrix = MathHelper::ModelMatrix((float)totalDegreesRotatedRadians, CVector3(0, -1.f, -2.f));
 
 			getOpenGLRenderer()->renderMCCube(&modelMatrix);
 		}
@@ -380,10 +380,10 @@ bool CProyectoFinal::loadWorld()
 	unloadWorld();
 
 	// Create new World
-	m_pWorld = new CWorld();
+	m_pWorld = new CWorld(getOpenGLRenderer());
 
 	// Initialize & Allocate graphics memory for object
-	bool loaded = m_pWorld->initialize(getOpenGLRenderer());
+	bool loaded = m_pWorld->initialize();
 
 	// If error ocurred, cleanup memory
 	if (!loaded)
@@ -394,6 +394,32 @@ bool CProyectoFinal::loadWorld()
 
 	worldLoading = false;
 	return loaded;
+}
+
+bool CProyectoFinal::loadWorldFromFile(string filename)
+{
+	// Unload any current 3D model
+	unloadWorld();
+
+	// Create new World
+	m_pWorld = new CWorld(getOpenGLRenderer());
+
+	// Initialize & Allocate graphics memory for object
+	bool loaded = m_pWorld->load(filename);
+
+	// If error ocurred, cleanup memory
+	if (!loaded)
+	{
+		unloadWorld();
+		return false;
+	}
+
+	return loaded;
+}
+
+bool CProyectoFinal::saveWorldToFile(string filename)
+{
+	return m_pWorld->save(filename);
 }
 
 /* */
@@ -417,10 +443,10 @@ void CProyectoFinal::onF2(int mods)
 	ZeroMemory(&ofn, sizeof(ofn));
 	ofn.lStructSize = sizeof(ofn);
 	ofn.hwndOwner = NULL;
-	ofn.lpstrFilter = L"Obj Files\0*.obj\0" L"3D Studio Files\0*.3ds\0";
+	ofn.lpstrFilter = L"World Files\0*.world\0";
 	ofn.lpstrFile = &wideStringBuffer[0];
 	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrTitle = L"Select a model file";
+	ofn.lpstrTitle = L"Select a world file";
 	ofn.Flags = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
 
 	if (GetOpenFileName(&ofn))
@@ -430,9 +456,9 @@ void CProyectoFinal::onF2(int mods)
 		WideCharToMultiByte(CP_UTF8, 0, &wideStringBuffer[0], (int)wideStringBuffer.size(), &multibyteString[0], size_needed, NULL, NULL);
 		Log << "Filename to load: " << multibyteString.c_str() << endl;
 
-		if (!loadWorld())
+		if (!loadWorldFromFile(multibyteString))
 		{
-			Log << "Unable to load 3D model" << endl;
+			Log << "Unable to load World" << endl;
 		}
 	}
 }
@@ -440,14 +466,31 @@ void CProyectoFinal::onF2(int mods)
 /* */
 void CProyectoFinal::onF3(int mods)
 {
-	// Check BITWISE AND to detect shift/alt/ctrl
-	if (mods & KEY_MOD_SHIFT)
+	std::wstring wideStringBuffer = L"buffer";
+	wideStringBuffer.resize(MAX_PATH);
+
+	OPENFILENAME ofn;
+
+	ZeroMemory(&ofn, sizeof(ofn));
+
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = NULL;
+	ofn.lpstrFilter = (LPCWSTR)L"World Files\0*.world\0";
+	ofn.lpstrFile = &wideStringBuffer[0];
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
+	ofn.lpstrDefExt = (LPCWSTR)L"txt";
+
+	if (GetSaveFileName(&ofn))
 	{
-		moveCamera(-1.0f);
-	}
-	else
-	{
-		moveCamera(1.0f);
+		int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wideStringBuffer[0], (int)wideStringBuffer.size(), NULL, 0, NULL, NULL);
+		std::string multibyteString(size_needed, 0);
+		WideCharToMultiByte(CP_UTF8, 0, &wideStringBuffer[0], (int)wideStringBuffer.size(), &multibyteString[0], size_needed, NULL, NULL);
+		Log << "Filename to save: " << multibyteString.c_str() << endl;
+		if (!saveWorldToFile(multibyteString))
+		{
+			Log << "Unable to save World" << endl;
+		}
 	}
 }
 
@@ -524,10 +567,13 @@ void CProyectoFinal::onMouseLeftClick()
 
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		std::cout << "LineTrace: "
-			<< line[i].getX() << ", "
-			<< line[i].getY() << ", "
-			<< line[i].getZ() << std::endl;
+		CCell * cell = m_pWorld->cubeGrid->getCell(line[i]);
+		if (cell != nullptr)
+		{
+			if (!m_pWorld->cubeGrid->deleteCell(cell->centro))
+				throw new std::invalid_argument("Could not delete Cube");
+			break;
+		}
 	}
 }
 

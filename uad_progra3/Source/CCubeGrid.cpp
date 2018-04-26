@@ -1,8 +1,8 @@
 #include "../Include/CCubeGrid.h"
 #include <string>
 
-CCubeGrid::CCubeGrid() : chunks(Zone(CVector3(0, 0, 0),
-	CVector3(CHUNK_SIZE * GRID_SIZE, CHUNK_HEIGHT * GRID_HEIGHT, CHUNK_SIZE * GRID_SIZE)))
+CCubeGrid::CCubeGrid() : cells(Zone(CVector3(0, 0, 0),
+	CVector3(GRID_SIZE, GRID_HEIGHT, GRID_SIZE)))
 {
 }
 
@@ -11,29 +11,39 @@ CCubeGrid::~CCubeGrid()
 {
 }
 
-CChunk * CCubeGrid::getChunk(CVector3 pos)
+CCell * CCubeGrid::getCell(CVector3 pos)
 {
-	return chunks.GetIndex(pos);
+	return cells.GetIndex(pos);
 }
 
-CChunk * CCubeGrid::getChunk(float x, float y, float z)
+CCell * CCubeGrid::getCell(float x, float y, float z)
 {
 	CVector3 pos(x, y, z);
-	return chunks.GetIndex(pos);
+	return cells.GetIndex(pos);
 }
 
-void CCubeGrid::addChunk(CChunk * chunk)
+bool CCubeGrid::deleteCell(CVector3 pos)
 {
-	chunks.Insert(chunk, CVector3(
-		(float)chunk->x, (float)chunk->y, (float)chunk->z));
+	return cells.DeleteIndex(pos);
 }
 
-size_t CCubeGrid::chunksSize()
+bool CCubeGrid::deleteCell(float x, float y, float z)
 {
-	return chunks.size();
+	return cells.DeleteIndex(CVector3(x, y, z));
 }
 
-OctTree<CChunk>* CCubeGrid::getChunks()
+void CCubeGrid::addCell(CCell * cell)
 {
-	return &chunks;
+	cells.Insert(cell, CVector3(
+		(float)cell->centro.getX(), (float)cell->centro.getY(), (float)cell->centro.getZ()));
+}
+
+size_t CCubeGrid::cellCount()
+{
+	return cells.size();
+}
+
+OctTree<CCell>* CCubeGrid::getCells()
+{
+	return &cells;
 }

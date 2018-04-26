@@ -71,6 +71,8 @@ private:
 	// Load/unload 3D model
 	static DWORD WINAPI staticLoadWorld(PVOID param);
 	bool loadWorld();
+	bool loadWorldFromFile(string filename);
+	bool saveWorldToFile(string filename);
 	void unloadWorld();
 
 	// Load World Thread

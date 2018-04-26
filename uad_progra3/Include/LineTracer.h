@@ -22,7 +22,7 @@ namespace LineTracer
 			y += deltaY;
 			z += deltaZ;
 
-			CVector3 res(round(x), round(y), round(z));
+			CVector3 res(-round(x), round(y), round(z));
 			if (std::find(output->begin(), output->end(), res) == output->end()) {
 				output->push_back(res);
 			}

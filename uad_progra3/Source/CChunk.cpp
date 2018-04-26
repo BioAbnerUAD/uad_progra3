@@ -9,7 +9,7 @@ CChunk::CChunk(CWorldIdObject* idObj, int x, int y, int z)
 			for (int k = 0; k < CHUNK_SIZE; k++)
 			{
 				CVector3 centro((float)(i + this->x), (float)(-j + this->y), (float)(k + this->z));
-				blocks[i][j][k].initialize(centro, idObj);
+				//blocks[i][j][k].initialize(centro, idObj);
 			}
 }
 

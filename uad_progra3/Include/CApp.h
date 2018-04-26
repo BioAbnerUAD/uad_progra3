@@ -8,7 +8,7 @@
 #include "COpenGLRenderer.h"
 #include "CCamera.h"
 
-#define DEFAULT_MOVEMENT_SPEED 0.2f
+#define DEFAULT_MOVEMENT_SPEED 0.04f
 #define DEFAULT_ROTATION_SPEED 0.005f
 
 #define KEY_MOD_SHIFT     0x0001

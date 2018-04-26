@@ -5,11 +5,11 @@
 
 CCamera::CCamera()
 {
-	initPosition.setValues((CHUNK_SIZE - 1) / 2.f, 0, (CHUNK_SIZE - 1) / 2.f);
+	initPosition.setValues(0.5f, 2.f, 0.5f);
 	position = initPosition;
 	rotation.setValues(0, 0, 0);
 	up.setValues(0, 1, 0); //Vector pointing up
-	lookAt.setValues(0, 0, 1); //Vector pointing to the front
+	lookAt.setValues(0, -0.2588190451, 0.96592582628); //Vector pointing to the front
 }
 
 void CCamera::Move(float dx, float dy, float dz)
